@@ -77,7 +77,7 @@ class Tokenizer:
       token.token_type = 'keyword'
 
   def read_comments(self):
-  pass
+    pass
 
   def next_token(self, character, token):
 
