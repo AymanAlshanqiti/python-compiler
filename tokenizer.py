@@ -1,138 +1,125 @@
+from token import Token
 
 class Tokenizer:
   def __init__(self, source_code):
     self.line_number = 1
-    self.pointer_position = 0
+    self.position = 0
     self.source_code = source_code
     self.length = len(self.source_code)
     self.keywords = ['if', 'else', 'for', 'echo', 'break', 'while', 'switch']
-    self.tokens = []
+    # self.tokens = []
 
-  # @property
-  # def is_eof(self):
-  #   return not self.pointer_position < self.source_len
+  @property
+  def is_eof(self):
+    return self.position >= self.length 
   
-  # @property
-  # def character(self):
-  #   try:
-  #     return self.source_code[self.pointer_position]
-  #   except:
-  #     return None
+  @property
+  def character(self):
+    return self.source_code[self.position]
   
-  def read_variable(self, token):
+  def read_variable(self):
+    token = Token()
     token.token_line_number = self.line_number
-    token.token_position = self.pointer_position
+    token.token_position = self.position
     token.token_type = 'variable'
-    token.token_value = self.source_code[self.pointer_position]
-    self.pointer_position += 1
-    while self.source_code[self.pointer_position].isalnum() or self.source_code[self.pointer_position] == '_':
-      token.token_value += self.source_code[self.pointer_position]
-      self.pointer_position += 1
+    token.token_value = self.character
+    self.position += 1
+    while self.character.isalnum() or self.character == '_':
+      token.token_value += self.character
+      self.position += 1
+    
+    return token
 
-  def read_space(self, token):
-    if self.source_code[self.pointer_position] == '\n':
+  def read_space(self):
+    token = Token()
+    if self.character == '\n':
       self.line_number += 1
       token.token_type = 'new_line'
     else:
       token.token_type = 'space'
     token.token_line_number = self.line_number
-    token.token_position = self.pointer_position
-    token.token_value = self.source_code[self.pointer_position]
-    self.pointer_position += 1
-    while self.source_code[self.pointer_position].isspace():
-      token.token_value += self.source_code[self.pointer_position]
-      self.pointer_position += 1
+    token.token_position = self.position
+    token.token_value = self.character
+    self.position += 1
+    while self.character.isspace():
+      token.token_value += self.character
+      self.position += 1
+    
+    return token
 
-  def read_number(self, token):
+  def read_number(self):
+    token = Token()
     token.token_type = 'number'
-    token.token_value = self.source_code[self.pointer_position]
-    self.pointer_position += 1
+    token.token_value = self.character
+    self.position += 1
     token.token_line_number = self.line_number
-    token.token_position = self.pointer_position
-    while self.source_code[self.pointer_position].isdigit():
-      token.token_value += self.source_code[self.pointer_position]
-      self.pointer_position += 1
+    token.token_position = self.position
+    while self.character.isdigit():
+      token.token_value += self.character
+      self.position += 1
+    
+    return token
 
-  def read_assign_op(self, token):
+  def read_assign_op(self):
+    token = Token()
     token.token_type = 'assign'
-    token.token_value = self.source_code[self.pointer_position]
-    self.pointer_position += 1
+    token.token_value = self.character
+    self.position += 1
     token.token_line_number = self.line_number
-    token.token_position = self.pointer_position
+    token.token_position = self.position
 
-  def read_semicolon(self, token):
+    return token
+
+  def read_semicolon(self):
+    token = Token()
     token.token_type = 'semicolon'
-    token.token_value = self.source_code[self.pointer_position]
-    self.pointer_position += 1
+    token.token_value = self.character
+    self.position += 1
     token.token_line_number = self.line_number
-    token.token_position = self.pointer_position
+    token.token_position = self.position
 
-  def read_keyword(self, token):
-    token.token_value = self.source_code[self.pointer_position]
-    self.pointer_position += 1
-    while self.source_code[self.pointer_position].isalpha():
-      token.token_value += self.source_code[self.pointer_position]
-      self.pointer_position += 1
+    return token
+
+  def read_keyword(self):
+    token = Token()
+    token.token_value = self.character
+    self.position += 1
+    while self.character.isalpha():
+      token.token_value += self.character
+      self.position += 1
     if token.token_value in self.keywords:
       token.token_type = 'keyword'
 
-  def read_comments(self):
-    pass
+    return token
 
-  def next_token(self, character, token):
+  def next_token(self):
+    if self.character == '$':
+      return self.read_variable()
 
-    if character == '$':
-      self.read_variable(token)
+    elif self.character.isspace():
+      return self.read_space()
 
-    elif character.isspace():
-      self.read_space(token)
-
-    elif character.isdigit():
-      self.read_number(token)
+    elif self.character.isdigit():
+      return self.read_number()
       
-    elif character == '=':
-      self.read_assign_op(token)
-      
+    elif self.character == '=':
+      return self.read_assign_op()
 
-    elif character == ';':
-      self.read_semicolon(token)
+    elif self.character == ';':
+      return self.read_semicolon()
 
-    elif self.source_code[self.pointer_position].isalpha():
-      self.read_keyword(token)
+    elif self.character.isalpha():
+      return self.read_keyword()
 
     else:
       print("error: Unexpected token")
-      self.pointer_position += 1
+      self.position += 1
+    
+  def __iter__(self):
+    return self
 
+  def __next__(self):
+    if self.is_eof:
+      raise StopIteration
 
-
-class Token:
-  def __init__(self):
-    self.token_type = '' #['variable', 'new_line', 'space', 'number', 'assign', 'semicolon', 'keyword', 'EOF']
-    self.token_value = ''
-    self.token_line_number = 1
-    self.token_position = 0
-
-
-# EofToken = Token()
-# EofToken.token_type = 'EOF'
-
-code = """$val_6_Welcome = 10;
-echo $val;
-if $data = 7 echo 2;"""
-
-tknizer = Tokenizer(code)
-print('\nThe length of source code is %s characters, and I\'m gonna loop throw it!' % tknizer.length)
-
-while tknizer.pointer_position < tknizer.length:
-  token = Token()
-  tknizer.tokens.append(token)
-  tknizer.next_token(tknizer.source_code[tknizer.pointer_position], token)
-
-for token in tknizer.tokens:
-  print('\n')
-  print('token type: %s' % token.token_type)
-  print('token value: %s' % token.token_value)
-  print('token line number: %s' % token.token_line_number)
-  print('token position: %s' % token.token_position)
-  print('------')
+    return self.next_token()
