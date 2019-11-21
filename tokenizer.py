@@ -122,13 +122,17 @@ echo $val;
 if $data = 7 echo 2;"""
 
 tknizer = Tokenizer(code)
-print('I have created a new Tokenizer obj boss!')
-print('The length of source code is %s characters, and I\'m gonna loop throw it!' % tknizer.length)
-
+print('\nThe length of source code is %s characters, and I\'m gonna loop throw it!' % tknizer.length)
 
 while tknizer.pointer_position < tknizer.length:
   token = Token()
   tknizer.tokens.append(token)
   tknizer.next_token(tknizer.source_code[tknizer.pointer_position], token)
 
-print("loool", tknizer.tokens[4].token_value)
+for token in tknizer.tokens:
+  print('\n')
+  print('token type: %s' % token.token_type)
+  print('token value: %s' % token.token_value)
+  print('token line number: %s' % token.token_line_number)
+  print('token position: %s' % token.token_position)
+  print('------')
