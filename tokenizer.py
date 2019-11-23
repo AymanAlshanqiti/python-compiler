@@ -7,7 +7,6 @@ class Tokenizer:
     self.source_code = source_code
     self.length = len(self.source_code)
     self.keywords = ['if', 'else', 'for', 'echo', 'break', 'while', 'switch']
-    # self.tokens = []
 
   @property
   def is_eof(self):
