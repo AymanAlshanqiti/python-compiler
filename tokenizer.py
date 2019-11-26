@@ -1,5 +1,5 @@
 from token_handler import *
-
+from token import EOFToken
 
 class Tokenizer:
   def __init__(self, source_code, handlers=[]):
@@ -15,9 +15,22 @@ class Tokenizer:
   
   @property
   def character(self):
-    return self.source_code[self.position]
+    if not self.is_eof:
+      return self.source_code[self.position]
+    else:
+      return None
 
   def next_token(self):
+    
+    if self.is_eof:
+      return EOFToken
+    
+    wshandler =  WhitespaceTokenHandler()
+    if(wshandler.is_readable(self)):
+      wshandler.tokenize(self)
+    
+    if self.is_eof:
+      return EOFToken
 
     for handler in self.handlers:
       if handler.is_readable(self):
@@ -32,7 +45,12 @@ class Tokenizer:
     return self
 
   def __next__(self):
-    if self.is_eof:
+    token = None
+    if self.is_eof :
       raise StopIteration
 
-    return self.next_token()
+    token = self.next_token()
+    if token is None:
+      raise StopIteration
+
+    return token

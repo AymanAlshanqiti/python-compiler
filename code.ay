@@ -1,0 +1,10 @@
+print 3
+while 10
+  print 5
+  var boolean isAdmin = false
+  for 1 to 2
+    while 7
+      print 9
+    end
+  end
+end
