@@ -79,7 +79,7 @@ class OneCharacterTokenHandler(TokenHandler):
 
 class IdTokenHandler(TokenHandler):
   def __init__(self):
-    self.keywords = ['var', 'if', 'else', 'for','end','to', 'echo', 'break', 'while', 'switch', 'print',
+    self.keywords = ['var','fun', 'if', 'else', 'for','end','to', 'echo', 'break', 'while', 'switch', 'print',
     'function', 'return', 'integer', 'float', 'char', 'boolean', 'true', 'false', 'null']
     self.datatypes = ['integer', 'float', 'char', 'boolean']
     self.literals = ['true', 'false', 'null']

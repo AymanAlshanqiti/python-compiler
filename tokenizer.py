@@ -37,6 +37,19 @@ class Tokenizer:
         return handler.tokenize(self)
     
     self.unexpected_token()
+  
+  def reset(self):
+    self.line_number = 1
+    self.position = 0
+
+  def read_all(self):
+    self.reset()
+    tokens = []
+    for token in self:
+      tokens.append(token)
+    
+    tokens.append(EOFToken)
+    return tokens
 
   def unexpected_token(self):
     print("Unexpected token '%s'" % self.character)

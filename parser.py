@@ -13,6 +13,32 @@ class BlockNode(Node):
     super().__init__(node_type)
     self.statements = statements
 
+class Expression:
+  def __init__(self):
+    pass
+
+class BinaryExpression(Expression):
+  def __init__(self, left, operator, right):
+    super().__init__()
+    self.left_expression = left
+    self.operator = operator
+    self.right_expression = right
+
+  
+class UnaryExpression(Expression):
+  def __init__(self, expression, operator):
+    super().__init__()
+    self.expression = expression
+    self.operator = operator
+
+
+class LiteralExpression(Expression):
+  def __init__(self, value=None):
+    super().__init__()
+    self.type = None
+    self.value = value
+
+
 # print value
 class PrintNode(Node):
   def __init__(self, value=None):
@@ -34,6 +60,13 @@ class ForNode(BlockNode):
     self.init_number = init_number
     self.last_number = last_number
 
+# fun datatype id() statements end
+class FunNode(BlockNode):
+  def __init__(self, datatype=None, identifire=None, statements=[]):
+    super().__init__('fun', statements)
+    self.datatype = datatype
+    self.identifier = identifire
+
 
 # while value statements end
 
@@ -43,23 +76,39 @@ class WhileNode(BlockNode):
     self.value = value
 
 class Parser:
-  def __init__(self):
+  def __init__(self, tokenizer):
     self.token = None
     self.current_level = 0
-    pass
+    self.current_level_name = ''
+    self.tokenizer = tokenizer
+    self.tokens = tokenizer.read_all()
+    self.current_token = 0
 
   def syntax_error(self, message, line_number, position):
     print('Ay syntax error:' + message + ', line number : ' + str(line_number) + ', position: ' + str(position))
     exit(0)
 
-  def parse_print(self, tokenizer):
+  def end_statement(self):
+    if self.token.category != 'keyword' or self.token.value != 'end':
+      self.syntax_error('"end" keyword expected', self.token.line_number, self.token.position)
+
+  def next_token(self):
+    self.token = self.tokens[self.current_token]
+    self.current_token += 1
+    return self.token
+  
+  def has_tokens(self):
+    return self.current_token < len(self.tokens)
+
+  def parse_print(self):
     print_statement = PrintNode()
     print_statement.line_number = self.token.line_number
     print_statement.position = self.token.position
     print_statement.level = self.current_level
 
     # 1. Check value token 
-    self.token = tokenizer.next_token()
+    self.token = self.next_token()
+    #self.tokenizer.next_token()
     if self.token.category == 'keyword':
       if self.token.type == 'literal':
         print_statement.value = self.token
@@ -71,13 +120,13 @@ class Parser:
     self.syntax_error("value expected", self.token.line_number, self.token.position)
     
 
-  def parse_var(self, tokenizer):
+  def parse_var(self):
     var_statement = VarNode()
     var_statement.line_number = self.token.line_number
     var_statement.position = self.token.position
     var_statement.level = self.current_level
     # var datatype id = value
-    self.token = tokenizer.next_token()
+    self.next_token()
 
     # 1. Check for datatype
     if self.token.category != 'keword' and self.token.type != 'datatype':
@@ -86,19 +135,19 @@ class Parser:
     var_statement.datatype = self.token
 
     # 2. Check for id
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category != 'id':
       self.syntax_error('id expected', self.token.line_number, self.token.position)
     
     var_statement.identifier = self.token
 
     # 3. Check for =
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category != 'punctuation' or self.token.type != 'assignment':
       self.syntax_error('assignment expected', self.token.line_number, self.token.position)
     
     # 4. Check for value
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category == 'keyword' or self.token.category == 'number':
       if self.token.category == 'keyword':
         if self.token.type != 'literal':
@@ -111,27 +160,56 @@ class Parser:
     var_statement.value = self.token
     return var_statement
   
-  def parse_for(self, tokenizer):
+  def match(self, token_category, token_type):
+    self.next_token()
+    if self.token.category != token_category or self.token.type != token_type:
+      self.syntax_error('unexpected token', self.token.line_number, self.token.position)
+   
+
+  def parse_fun(self):
+    if self.current_level != 0:
+      self.syntax_error('invalid use of function', self.token.line_number, self.token.position)
+    fun_statement = FunNode()
+    fun_statement.line_number = self.token.line_number
+    fun_statement.position = self.token.position
+    fun_statement.level = self.current_level
+    
+    self.match('keyword','datatype')
+    fun_statement.datatype = self.token
+    self.match('id','id')
+    fun_statement.identifier = self.token
+    self.match('punctuation', 'parenl')
+    self.match('punctuation', 'parenr')
+ 
+    # 5. Read statements
+    self.current_level += 1
+    fun_statement.statements = self.parse()
+    self.end_statement()
+
+    return fun_statement
+  
+
+  def parse_for(self):
     for_statement = ForNode()
     for_statement.line_number = self.token.line_number
     for_statement.position  = self.token.position
     for_statement.level = self.current_level
 
     # 1. Check initial number
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category != 'number':
       self.syntax_error("initial value must be a number", self.token.line_number, self.token.position)
     
     for_statement.init_number = self.token
 
     # 2. Check 'to' keyword
-    self.token = tokenizer.next_token()
+    self.next_token()
 
     if self.token.category != 'keyword' or self.token.value != 'to':
       self.syntax_error('"to" keyword expected', self.token.line_number, self.token.position)
     
     #3. Check last number
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category != 'number':
       self.syntax_error("last value must be a number", self.token.line_number, self.token.position)
     
@@ -139,21 +217,21 @@ class Parser:
 
     #4. Read statements
     self.current_level += 1
-    for_statement.statements = self.parse(tokenizer)
+    for_statement.statements = self.parse()
 
     if self.token.category != 'keyword' or self.token.value != 'end':
       self.syntax_error('"end" keyword expected', self.token.line_number, self.token.position)
     
     return for_statement
   
-  def parse_while(self, tokenizer):
+  def parse_while(self):
     while_statement = WhileNode()
     while_statement.line_number = self.token.line_number
     while_statement.position  = self.token.position
     while_statement.level = self.current_level
 
     # 1. Check value
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category != 'number':
       self.syntax_error("value expected", self.token.line_number, self.token.position)
     
@@ -161,17 +239,22 @@ class Parser:
 
     #2. Read statements
     self.current_level += 1
-    while_statement.statements = self.parse(tokenizer)
+    while_statement.statements = self.parse()
 
     if self.token.category != 'keyword' or self.token.value != 'end':
       self.syntax_error('"end" keyword expected', self.token.line_number, self.token.position)
     
     return while_statement
     
-  
-  def parse(self, tokenizer):
+  #start expression apis
+  # def expression(self):
+  #   expr = self.multiplication(self)
+  #   self.token = tokenizer.next_token()
+
+  #end expression apis
+  def parse(self):
     statements = []
-    self.token = tokenizer.next_token()
+    self.next_token()
     if self.token.category == 'keyword' and self.token.value == 'end':
       self.current_level -= 1
       if self.current_level < 0:
@@ -181,21 +264,24 @@ class Parser:
     while self.token != EOFToken:
       if self.token.category == 'keyword':
         if self.token.value == 'var':
-          statements.append(self.parse_var(tokenizer))
+          statements.append(self.parse_var())
         elif self.token.value == 'print':
-          statements.append(self.parse_print(tokenizer))
+          statements.append(self.parse_print())
         elif self.token.value == 'for':
-          statements.append(self.parse_for(tokenizer))
+          self.current_level_name = self.token.value
+          statements.append(self.parse_for())
         elif self.token.value == 'while':
-          statements.append(self.parse_while(tokenizer))
+          self.current_level_name = self.token.value
+          statements.append(self.parse_while())
+        elif self.token.value == 'fun':
+          self.current_level_name = self.token.value
+          statements.append(self.parse_fun())
       
-      self.token = tokenizer.next_token()
+      self.next_token()
       if self.token.category == 'keyword' and self.token.value == 'end':
         self.current_level -= 1
         if self.current_level < 0:
           self.syntax_error('unexpected end', self.token.line_number, self.token.position)
-     
         break
 
-    
     return statements

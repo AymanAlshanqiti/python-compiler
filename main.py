@@ -48,9 +48,7 @@ ay_tokenizer_handlers = [
 with open('code.ay', 'r') as ay:
   code = ay.read(1024)
 
-ay_tokenizer = Tokenizer(code, ay_tokenizer_handlers)
-ay_parser = Parser()
-statements = ay_parser.parse(ay_tokenizer)
+statements = Parser(Tokenizer(code, ay_tokenizer_handlers)).parse()
 
 def print_statements(statements, level=1):
   for statement in statements:
