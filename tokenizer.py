@@ -1,5 +1,5 @@
 from token_handler import *
-from token import EOFToken
+from token import EOFToken, ERRToken
 
 class Tokenizer:
   def __init__(self, source_code, handlers=[]):
@@ -8,6 +8,7 @@ class Tokenizer:
     self.source_code = source_code
     self.length = len(self.source_code)
     self.handlers = handlers
+    self.tokens = []
 
   @property
   def is_eof(self):
@@ -44,12 +45,12 @@ class Tokenizer:
 
   def read_all(self):
     self.reset()
-    tokens = []
+    self.tokens = []
     for token in self:
-      tokens.append(token)
+      self.tokens.append(token)
     
-    tokens.append(EOFToken)
-    return tokens
+    self.tokens.append(EOFToken)
+    return self.tokens
 
   def unexpected_token(self):
     print("Unexpected token '%s'" % self.character)
@@ -67,3 +68,43 @@ class Tokenizer:
       raise StopIteration
 
     return token
+
+
+class TokenizerList:
+  def __init__(self, source_code, handlers= []):
+    self.tokens = Tokenizer(source_code, handlers).read_all()
+    self.current = -1
+  
+  def has_token(self):
+    return (self.current + 1) < len(self.tokens)
+
+  def reset(self):
+    self.current = -1
+  
+  @property
+  def token(self):
+    if not self.has_token():
+      return EOFToken
+    
+    if self.current == -1:
+      return ERRToken
+      
+    return self.tokens[self.current]
+  
+  def peek(self):
+    if self.has_token():
+      return self.tokens[self.current + 1]
+    return EOFToken
+  
+  def next(self):
+    if self.has_token():
+      self.current += 1
+      return self.token
+    return EOFToken
+  
+
+    
+  
+
+    
+  

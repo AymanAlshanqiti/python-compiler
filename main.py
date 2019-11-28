@@ -1,4 +1,4 @@
-from tokenizer import Tokenizer
+from tokenizer import Tokenizer, TokenizerList
 from token import Token
 from token_handler import *
 from parser import *
@@ -48,7 +48,8 @@ ay_tokenizer_handlers = [
 with open('code.ay', 'r') as ay:
   code = ay.read(1024)
 
-statements = Parser(Tokenizer(code, ay_tokenizer_handlers)).parse()
+
+statements = Parser(TokenizerList(code, ay_tokenizer_handlers)).parse()
 
 def print_statements(statements, level=1):
   for statement in statements:

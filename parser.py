@@ -33,7 +33,7 @@ class UnaryExpression(Expression):
 
 
 class LiteralExpression(Expression):
-  def __init__(self, value=None):
+  def __init__(self, type, value=None):
     super().__init__()
     self.type = None
     self.value = value
@@ -81,8 +81,6 @@ class Parser:
     self.current_level = 0
     self.current_level_name = ''
     self.tokenizer = tokenizer
-    self.tokens = tokenizer.read_all()
-    self.current_token = 0
 
   def syntax_error(self, message, line_number, position):
     print('Ay syntax error:' + message + ', line number : ' + str(line_number) + ', position: ' + str(position))
@@ -91,15 +89,7 @@ class Parser:
   def end_statement(self):
     if self.token.category != 'keyword' or self.token.value != 'end':
       self.syntax_error('"end" keyword expected', self.token.line_number, self.token.position)
-
-  def next_token(self):
-    self.token = self.tokens[self.current_token]
-    self.current_token += 1
-    return self.token
   
-  def has_tokens(self):
-    return self.current_token < len(self.tokens)
-
   def parse_print(self):
     print_statement = PrintNode()
     print_statement.line_number = self.token.line_number
@@ -107,7 +97,7 @@ class Parser:
     print_statement.level = self.current_level
 
     # 1. Check value token 
-    self.token = self.next_token()
+    self.token = self.tokenizer.next()
     #self.tokenizer.next_token()
     if self.token.category == 'keyword':
       if self.token.type == 'literal':
@@ -126,7 +116,7 @@ class Parser:
     var_statement.position = self.token.position
     var_statement.level = self.current_level
     # var datatype id = value
-    self.next_token()
+    self.token = self.tokenizer.next()
 
     # 1. Check for datatype
     if self.token.category != 'keword' and self.token.type != 'datatype':
@@ -135,19 +125,19 @@ class Parser:
     var_statement.datatype = self.token
 
     # 2. Check for id
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category != 'id':
       self.syntax_error('id expected', self.token.line_number, self.token.position)
     
     var_statement.identifier = self.token
 
     # 3. Check for =
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category != 'punctuation' or self.token.type != 'assignment':
       self.syntax_error('assignment expected', self.token.line_number, self.token.position)
     
     # 4. Check for value
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category == 'keyword' or self.token.category == 'number':
       if self.token.category == 'keyword':
         if self.token.type != 'literal':
@@ -161,7 +151,7 @@ class Parser:
     return var_statement
   
   def match(self, token_category, token_type):
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category != token_category or self.token.type != token_type:
       self.syntax_error('unexpected token', self.token.line_number, self.token.position)
    
@@ -188,7 +178,6 @@ class Parser:
 
     return fun_statement
   
-
   def parse_for(self):
     for_statement = ForNode()
     for_statement.line_number = self.token.line_number
@@ -196,20 +185,20 @@ class Parser:
     for_statement.level = self.current_level
 
     # 1. Check initial number
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category != 'number':
       self.syntax_error("initial value must be a number", self.token.line_number, self.token.position)
     
     for_statement.init_number = self.token
 
     # 2. Check 'to' keyword
-    self.next_token()
+    self.token = self.tokenizer.next()
 
     if self.token.category != 'keyword' or self.token.value != 'to':
       self.syntax_error('"to" keyword expected', self.token.line_number, self.token.position)
     
     #3. Check last number
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category != 'number':
       self.syntax_error("last value must be a number", self.token.line_number, self.token.position)
     
@@ -231,7 +220,7 @@ class Parser:
     while_statement.level = self.current_level
 
     # 1. Check value
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category != 'number':
       self.syntax_error("value expected", self.token.line_number, self.token.position)
     
@@ -247,14 +236,44 @@ class Parser:
     return while_statement
     
   #start expression apis
-  # def expression(self):
-  #   expr = self.multiplication(self)
-  #   self.token = tokenizer.next_token()
+  
+  def expression(self):
+    expr = self.multiplication()
+    operator = self.tokenizer.peek()
+    while operator.value == '+' or operator.value == '-':
+      self.tokenizer.next()
+      right_expression = self.multiplication()
+      expr = BinaryExpression(expr, operator, right_expression)
+    
+    return expr
+  
+  def multiplication(self):
+    expr = self.primary()
+    operator = self.tokenizer.peek()
+    while operator.value == '/' or operator.value == '*':
+      self.tokenizer.next()
+      right_expression = self.primary()
+      expr = BinaryExpression(expr, operator, right_expression)
+    return expr
+  
+  def primary(self):
+    self.token = self.tokenizer.peek()
+    if self.token.category == 'number':
+      return LiteralExpression('integer', token.value)
+    elif self.token.category == 'keyword' and self.token.type == 'literal':
+      if self.token.value == 'null':
+        return LiteralExpression('null', token.value)
+      else:
+        return LiteralExpression('boolean', token.value)
+    
+    self.syntax_error('invalid literal value', self.token.line_number, self.token.position)
+  
+
 
   #end expression apis
   def parse(self):
     statements = []
-    self.next_token()
+    self.token = self.tokenizer.next()
     if self.token.category == 'keyword' and self.token.value == 'end':
       self.current_level -= 1
       if self.current_level < 0:
@@ -277,7 +296,7 @@ class Parser:
           self.current_level_name = self.token.value
           statements.append(self.parse_fun())
       
-      self.next_token()
+      self.token = self.tokenizer.next()
       if self.token.category == 'keyword' and self.token.value == 'end':
         self.current_level -= 1
         if self.current_level < 0:

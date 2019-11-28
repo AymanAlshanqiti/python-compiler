@@ -18,3 +18,6 @@ class Token:
   
 EOFToken = Token()
 EOFToken.category = 'EOF'
+
+ERRToken = Token()
+ERRToken.category = 'ERR'
