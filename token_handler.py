@@ -65,7 +65,11 @@ class OneCharacterTokenHandler(TokenHandler):
       '}': 'curlyr', 
       '(': 'parenl', 
       ')': 'parenr',
-      ',': 'comma'
+      ',': 'comma',
+      '+': 'plus',
+      '-': 'minus',
+      '/': 'division',
+      '*': 'multiplication'
     }
 
   def is_readable(self, tokenizer):
@@ -101,6 +105,8 @@ class IdTokenHandler(TokenHandler):
         token.type = 'datatype'
       elif token.value in self.literals:
         token.type = 'literal'
+      else:
+        token.type = token.value
 
            
     return token

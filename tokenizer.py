@@ -1,6 +1,14 @@
 from token_handler import *
 from token import EOFToken, ERRToken
 
+
+ay_tokenizer_handlers = [
+  NumberTokenHandler(),
+  OneCharacterTokenHandler(),
+  IdTokenHandler(),
+  CommentTokenHandler(),
+]
+
 class Tokenizer:
   def __init__(self, source_code, handlers=[]):
     self.line_number = 1
@@ -88,7 +96,7 @@ class TokenizerList:
     
     if self.current == -1:
       return ERRToken
-      
+
     return self.tokens[self.current]
   
   def peek(self):
