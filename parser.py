@@ -35,13 +35,14 @@ class UnaryExpression(Expression):
 class LiteralExpression(Expression):
   def __init__(self, type, value=None):
     super().__init__()
-    self.type = None
+    self.type = type
     self.value = value
 
 class IdentifierExpression(Expression):
-  def __init__(self, type, identifier=None):
+  def __init__(self, identifier, value=None):
     super().__init__()
     self.identifier = identifier
+    self.value = value
 
 
 # print value
