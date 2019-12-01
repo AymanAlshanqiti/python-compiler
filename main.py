@@ -21,8 +21,7 @@ if parser.has_error():
 def print_statements(statements, level=1):
   for statement in statements:
     print(level * '\t', end='')
-    print('-> ')
-    print("statement type: " + statement.type)
+    print("-> statement type: " + statement.type)
     if isinstance(statement, BlockStatement):
       print_statements(statement.statements, level + 1)
     elif isinstance(statement, PrintStatement):
@@ -48,4 +47,5 @@ def print_expression(expression, level= 1):
     print(expression.identifier)
   
 
-print_statements(program)
+#print_statements(program)
+
