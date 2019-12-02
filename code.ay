@@ -1,1 +1,0 @@
-print ((fileSize - (lastRecord * 2) + (total / 4) - 8) + 2348 * (29 - visualStudio) * 6 + (32 - terminalResult)) + 934875
