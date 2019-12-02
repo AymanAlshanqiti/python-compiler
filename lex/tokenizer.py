@@ -1,27 +1,10 @@
 from lex.tokenizer import *
 from lex.handler import *
 
-class WhitespaceTokenHandler(TokenHandler):
-
-  def is_tokenizable(self, tokenizer):
-    return tokenizer.character.isspace()
-
-  def tokenize(self, tokenizer):
-    token = self.token_init(tokenizer, 'space','space')
-    
-    if tokenizer.character == '\n':
-      tokenizer.line_number += 1
-
-    tokenizer.position += 1
-    while not tokenizer.is_eof and tokenizer.character.isspace():
-      token.value += tokenizer.character
-      tokenizer.position += 1
-    return token
-
 class Tokenizer:
   def __init__(self, source_code, handlers=[]):
     self.line_number = 1
-    self.position = 0
+    self.position = -1
     self.source_code = source_code
     self.length = len(self.source_code)
     self.handlers = handlers
@@ -36,7 +19,7 @@ class Tokenizer:
     if not self.is_eof:
       return self.source_code[self.position]
     else:
-      return None
+      return '\0'
   
   @property
   def next_character(self):
@@ -51,16 +34,9 @@ class Tokenizer:
     try:
       return self.source_code[self.position + 1]
     except:
-      return None
+      return '\0'
 
   def next_token(self):
-    
-    if self.is_eof:
-      return EOFToken
-    
-    wshandler =  WhitespaceTokenHandler()
-    if(wshandler.is_tokenizable(self)):
-      wshandler.tokenize(self)
     
     if self.is_eof:
       return EOFToken
@@ -69,11 +45,14 @@ class Tokenizer:
       if handler.is_tokenizable(self):
         return handler.tokenize(self)
     
+    if self.is_eof:
+      return EOFToken
+
     self.unexpected_token()
   
   def reset(self):
     self.line_number = 1
-    self.position = 0
+    self.position = -1
 
   def read_all(self):
     self.reset()
@@ -89,7 +68,7 @@ class Tokenizer:
       print("Unexpected token '%s', line number : %d, position: %d" % (self.character, self.line_number, self.position))
     else:
       print("Unexpected token '%s', line number : %d, position: %d" % ('EOF', self.line_number, self.position))
-
+    exit(0)
 
   def __iter__(self):
     return self
