@@ -6,6 +6,7 @@ from lex.handlers.whitespace import WhitespaceTokenHandler
 from lex.handlers.identifier import IdentifierTokenHandler
 from lex.handlers.comment import CommentTokenHandler
 from lex.handlers.symbol import SymbolTokenHandler
+from lex.handlers.string import StringTokenHandler
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -13,7 +14,7 @@ with open('main.stp', 'r') as ay:
 tk = Tokenizer(code,[
   WhitespaceTokenHandler(),
   NumberTokenHandler(),
-  IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for'],{
+  IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for', 'int', 'float', 'boolean', 'string'],{
     'false': 'boolean',
     'true': 'boolean',
     'null': 'null',
@@ -24,10 +25,14 @@ tk = Tokenizer(code,[
   SymbolTokenHandler( {
       '+': [{'+': 'plus'}, {'+':'plusplus'}],
       '-': [{'-': 'minus'}, {'-':'minusminus'}],
-      '!': [{'!': 'not'}, {'=': 'notequal'}, {'=': 'noteqeq'}]
-    })
+      '!': [{'!': 'not'}, {'=': 'notequal'}, {'=': 'noteqeq'}],
+      ';': [{';': 'semicolon'}],
+      '=': [{'=': 'assignment'}, {'=':'eqeq'}],
+      '(': [{'(': 'left_paren'}],
+      ')': [{')': 'right_paren'}]
+    }),
+  StringTokenHandler()
 ])
 
 for token in tk:
   print(token.category, '->', token.type, '->', token.value)
-

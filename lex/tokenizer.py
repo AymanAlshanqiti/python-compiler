@@ -38,16 +38,16 @@ class Tokenizer:
     return NullCharacter
 
   def next_token(self):
-    if self.is_eof():
+    if not self.is_peekable():
       return EOFToken
 
     for handler in self.handlers:
       if handler.is_tokenizable(self):
         return handler.tokenize(self)
     
-    if self.is_eof():
+    if not self.is_peekable():
       return EOFToken
-
+  
     self.unexpected_token()
   
   def reset(self):
