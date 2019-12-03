@@ -7,8 +7,10 @@ from lex.handlers.whitespace import WhitespaceTokenHandler
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
 
-for token in TokenizerList(code, [
+tk = Tokenizer(code,[
   WhitespaceTokenHandler(),
-  NumberTokenHandler()
-]).tokens:
-  print(token.value)
+  NumberTokenHandler(),
+])
+
+for token in tk:
+  print(token.category, '->', token.position)

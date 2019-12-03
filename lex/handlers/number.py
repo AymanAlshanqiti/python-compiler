@@ -4,37 +4,34 @@ from lex.token import *
 class NumberTokenHandler(TokenHandler):
   
   def is_tokenizable(self, tokenizer):
-    return tokenizer.peek.isdigit()
+    return tokenizer.peek().isdigit()
 
   def tokenize(self, tokenizer):
-    token = Token('literal','number')
-    token.value = tokenizer.next_character
-    token.position = tokenizer.position
-    token.line_number = tokenizer.line_number
-    
+    token = Token('literal','number', tokenizer.nxcharacter(), tokenizer.line_number, tokenizer.position)
+   
     #binary, octal, or hexadecimal
-    if tokenizer.character == '0':
-      if tokenizer.peek in 'box':
-        token.value += tokenizer.next_character
-        return self._tokenize_digit(tokenizer, token, tokenizer.character)
+    if tokenizer.character() == '0':
+      if tokenizer.peek() in 'box':
+        token.value += tokenizer.nxcharacter()
+        return self._tokenize_digit(tokenizer, token, tokenizer.character())
 
     #decimal
     token.add_metadata('datatype', 'integer')
     token.add_metadata('radix', 10)
 
-    while not tokenizer.is_eof and tokenizer.peek.isdigit():
-      token.value += tokenizer.next_character
+    while tokenizer.is_peekable() and tokenizer.peek().isdigit():
+      token.value += tokenizer.nxcharacter()
 
     # tokenizer floating point numbrer
-    if tokenizer.peek == '.':
-      token.value += tokenizer.next_character
-      if tokenizer.is_eof or not tokenizer.peek.isdigit():
+    if tokenizer.peek() == '.':
+      token.value += tokenizer.nxcharacter()
+      if not tokenizer.is_peekable() or not tokenizer.peek().isdigit():
         tokenizer.unexpected_token()
       
-      token.value += tokenizer.next_character
+      token.value += tokenizer.nxcharacter()
 
-      while not tokenizer.is_eof and tokenizer.peek.isdigit():
-        token.value += tokenizer.next_character
+      while tokenizer.is_peekable() and tokenizer.peek().isdigit():
+        token.value += tokenizer.nxcharacter()
       
       token.add_metadata('datatype', 'float')
 
@@ -53,8 +50,8 @@ class NumberTokenHandler(TokenHandler):
       'x': 16
     }
 
-    while not tokenizer.is_eof and tokenizer.peek in digits[digit_prefix]:
-      token.value += tokenizer.next_character
+    while tokenizer.is_peekable() and tokenizer.peek() in digits[digit_prefix]:
+      token.value += tokenizer.nxcharacter()
     
     if token.value != '0' + digit_prefix:
       token.category = 'literal'
