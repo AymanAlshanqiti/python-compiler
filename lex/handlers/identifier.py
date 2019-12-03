@@ -11,12 +11,13 @@ class IdentifierTokenHandler(TokenHandler):
 
   def tokenize(self, tokenizer):
     token = tokenizer.build_token('id','id', lambda t : t.peek().isalnum() or t.peek() == '_')
+    
     if token.value in self.keywords:
       token.category = 'keyword'
       token.type = 'keyword'
     
     if token.value in self.literals.keys():
-      token.category = 'keyword'
+      token.category = 'literal'
       token.type = self.literals[self.value]
-      
+
     return token

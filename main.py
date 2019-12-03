@@ -15,7 +15,9 @@ tk = Tokenizer(code,[
   IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for'],{
     'false': 'boolean',
     'true': 'boolean',
-    'null': 'null'
+    'null': 'null',
+    'nil': 'null',
+    'none': 'null'
   }),
   CommentTokenHandler()
 ])
