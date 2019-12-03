@@ -13,4 +13,4 @@ tk = Tokenizer(code,[
 ])
 
 for token in tk:
-  print(token.category, '->', token.position)
+  print(token.category, '->', token.value)

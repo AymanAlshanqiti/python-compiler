@@ -7,4 +7,4 @@ class WhitespaceTokenHandler(TokenHandler):
     return tokenizer.peek().isspace()
 
   def tokenize(self, tokenizer):
-    return tokenizer.build_token('space','space', tokenizer.peek().isspace())
+    return tokenizer.build_token('space','space', lambda t : t.peek().isspace())

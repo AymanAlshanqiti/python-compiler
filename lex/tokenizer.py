@@ -11,7 +11,7 @@ class Tokenizer:
     self.length = len(self.source_code)
     self.handlers = handlers
     self.tokens = []
-
+  
   def is_eof(self):
     return self.position >= self.length 
   
@@ -54,11 +54,21 @@ class Tokenizer:
     self.line_number = 1
     self.position = -1
 
+  def loop(self, expression):
+    if not callable(expression):
+      raise Exception("Invalid loop expression")
+    token_value = ''
+    while self.is_peekable() and expression(self):
+      token_value += self.nxcharacter()
+    return token_value
+
   def build_token(self, category=None, ttype=None, expression = False):
     token = Token(category, ttype, self.nxcharacter(), self.line_number, self.position)
-    while self.is_peekable() and expression:
-      token.value += self.nxcharacter()
+    token.value += self.loop(expression)
     return token
+  
+  def build_default_token(self, category, ttype):
+    return Token(category,ttype, self.nxcharacter(), self.line_number, self.position)
 
   def __iter__(self):
     return self
