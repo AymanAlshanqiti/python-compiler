@@ -4,6 +4,7 @@ from lex.token import *
 from lex.handlers.number import NumberTokenHandler
 from lex.handlers.whitespace import WhitespaceTokenHandler
 from lex.handlers.identifier import IdentifierTokenHandler
+from lex.handlers.comment import CommentTokenHandler
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -11,7 +12,12 @@ with open('main.stp', 'r') as ay:
 tk = Tokenizer(code,[
   WhitespaceTokenHandler(),
   NumberTokenHandler(),
-  IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for'])
+  IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for'],{
+    'false': 'boolean',
+    'true': 'boolean',
+    'null': 'null'
+  }),
+  CommentTokenHandler()
 ])
 
 for token in tk:
