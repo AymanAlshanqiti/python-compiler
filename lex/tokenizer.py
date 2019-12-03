@@ -45,7 +45,7 @@ class Tokenizer:
       if handler.is_tokenizable(self):
         return handler.tokenize(self)
     
-    if self.is_eof:
+    if self.is_eof():
       return EOFToken
 
     self.unexpected_token()
@@ -80,8 +80,8 @@ class Tokenizer:
     return token
   
   def unexpected_token(self):
-    if not self.is_eof:
-      print("Unexpected token '%s', line number : %d, position: %d" % (self.character, self.line_number, self.position))
+    if not self.is_eof():
+      print("Unexpected token '%s', line number : %d, position: %d" % (self.peek(), self.line_number, self.position))
     else:
       print("Unexpected token '%s', line number : %d, position: %d" % ('EOF', self.line_number, self.position))
     exit(0)

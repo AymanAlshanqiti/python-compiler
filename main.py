@@ -5,6 +5,7 @@ from lex.handlers.number import NumberTokenHandler
 from lex.handlers.whitespace import WhitespaceTokenHandler
 from lex.handlers.identifier import IdentifierTokenHandler
 from lex.handlers.comment import CommentTokenHandler
+from lex.handlers.symbol import SymbolTokenHandler
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -19,8 +20,14 @@ tk = Tokenizer(code,[
     'nil': 'null',
     'none': 'null'
   }),
-  CommentTokenHandler()
+  CommentTokenHandler(),
+  SymbolTokenHandler( {
+      '+': [{'+': 'plus'}, {'+':'plusplus'}],
+      '-': [{'-': 'minus'}, {'-':'minusminus'}],
+      '!': [{'!': 'not'}, {'=': 'notequal'}, {'=': 'noteqeq'}]
+    })
 ])
 
 for token in tk:
   print(token.category, '->', token.type, '->', token.value)
+
