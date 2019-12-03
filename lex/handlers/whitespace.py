@@ -7,13 +7,4 @@ class WhitespaceTokenHandler(TokenHandler):
     return tokenizer.peek().isspace()
 
   def tokenize(self, tokenizer):
-    token = Token('space','space', tokenizer.nxcharacter(), tokenizer.line_number, tokenizer.position)
-
-    if tokenizer.character() == '\n':
-      tokenizer.line_number += 1
-    
-    while tokenizer.is_peekable() and tokenizer.peek().isspace():
-      token.value += tokenizer.nxcharacter()
-      if tokenizer.character() == '\n':
-        tokenizer.line_number += 1
-    return token
+    return tokenizer.build_token('space','space', tokenizer.peek().isspace())

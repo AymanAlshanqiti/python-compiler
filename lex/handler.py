@@ -12,3 +12,4 @@ class TokenHandler(ABC):
   @abstractclassmethod
   def tokenize(self, tokenizer):
     return None
+

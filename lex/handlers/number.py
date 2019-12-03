@@ -7,7 +7,7 @@ class NumberTokenHandler(TokenHandler):
     return tokenizer.peek().isdigit()
 
   def tokenize(self, tokenizer):
-    token = Token('literal','number', tokenizer.nxcharacter(), tokenizer.line_number, tokenizer.position)
+    token = self.create_token(tokenizer, 'literal','number')
    
     #binary, octal, or hexadecimal
     if tokenizer.character() == '0':

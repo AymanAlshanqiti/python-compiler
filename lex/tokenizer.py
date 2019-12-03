@@ -32,6 +32,8 @@ class Tokenizer:
   def nxcharacter(self):
     if self.is_peekable():
       self.position += 1
+      if self.character() == '\n':
+        self.line_number += 1
       return self.source_code[self.position]
     return NullCharacter
 
@@ -51,6 +53,12 @@ class Tokenizer:
   def reset(self):
     self.line_number = 1
     self.position = -1
+
+  def build_token(self, category=None, ttype=None, expression = False):
+    token = Token(category, ttype, self.nxcharacter(), self.line_number, self.position)
+    while self.is_peekable() and expression:
+      token.value += self.nxcharacter()
+    return token
 
   def __iter__(self):
     return self
