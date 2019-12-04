@@ -42,9 +42,14 @@ class Tokenizer:
     if not self.is_peekable():
       return EOFToken
     
-    for handler in self.handlers:
-      if not handler.is_skipped and handler.is_tokenizable(self):
-        return handler.tokenize(self)
+    while self.is_peekable():
+      for handler in self.handlers:
+        if isinstance(handler, TokenHandler) and handler.is_tokenizable(self):
+          token =  handler.tokenize(self)
+          if not handler.is_skipped:
+            return token
+          else:
+            break
   
     if not self.is_peekable():
       return EOFToken

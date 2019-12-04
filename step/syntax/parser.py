@@ -1,6 +1,6 @@
 from step.lex.token import *
 from step.lex.tokenizer import *
-from step.syntax.expressions import *
+from step.syntax.types import *
 
 class Parser:
   def __init__(self, tokenizer, handlers=[]):
@@ -42,7 +42,7 @@ class Parser:
   
   def equality_expression(self):
     expr = self.relational_expression()
-    while self.nxtoken.value == '==' or self.nxtoen.value == '!=':
+    while self.nxtoken.value == '==' or self.nxtoken.value == '!=':
       self.consume()
       operator = self.token
       right = self.relational_expression()
@@ -51,7 +51,7 @@ class Parser:
   
   def relational_expression(self):
     expr = self.additive_expression()
-    while self.nxtoken.value == '>' or self.nxtoen.value == '<' or self.nxtoken.value == '>=' or self.token.value == '<=':
+    while self.nxtoken.value == '>' or self.nxtoken.value == '<' or self.nxtoken.value == '>=' or self.token.value == '<=':
       self.consume()
       operator = self.token
       right = self.additive_expression()
@@ -60,7 +60,7 @@ class Parser:
   
   def additive_expression(self):
     expr = self.multiplicative_expression()
-    while self.nxtoken.value == '+' or self.nxtoen.value == '-':
+    while self.nxtoken.value == '+' or self.nxtoken.value == '-':
       self.consume()
       operator = self.token
       right = self.multiplicative_expression()
@@ -69,7 +69,7 @@ class Parser:
 
   def multiplicative_expression(self):
     expr = self.unary_expression()
-    while self.nxtoken.value == '*' or self.nxtoen.value == '/' or self.nxtoen.value == '%':
+    while self.nxtoken.value == '*' or self.nxtoken.value == '/' or self.nxtoken.value == '%':
       self.consume()
       operator = self.token
       right = self.unary_expression()
@@ -88,6 +88,7 @@ class Parser:
         
 
   def primary(self):
+    expr = None
     if self.nxtoken.category == 'literal':
       self.consume()
       return LiteralExpression(self.token)
@@ -101,8 +102,12 @@ class Parser:
         self.tokenizer.unexpected_token()
       self.consume()
       return expr
-
-    self.tokenizer.unexpected_token()
+    
+    # if not self.tokenizer.is_eof():
+    #   print('yep')
+    #   self.tokenizer.unexpected_token()
+    
+    return expr
     
   
   def parse(self, parent=None):

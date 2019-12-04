@@ -1,11 +1,10 @@
 from step.lex.handler import TokenHandler
 from step.lex.token import Token
 
-class NumberTokenHandler(TokenHandler):
+class NumberTokenHandler(TokenHandler):    
   def __init__(self):
     super().__init__()
     
-  def __init__(self):
     self.digits = {
       'b': '01',
       'o': '01234567',

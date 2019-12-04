@@ -37,7 +37,8 @@ tk = Tokenizer(code,[
   StringTokenHandler(),
 ])
 
-prs = Parser(tk, [PrintStatementParser()])
-print(prs.parse())
 # for token in tk:
 #   print(token.category, '->', token.type, '->', token.value)
+prs = Parser(tk, [PrintStatementParser()])
+statements = prs.parse()
+print(statements)
