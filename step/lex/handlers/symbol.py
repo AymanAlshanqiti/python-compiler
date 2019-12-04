@@ -1,5 +1,5 @@
-from lex.handler import TokenHandler
-from lex.token import Token
+from step.lex.handler import TokenHandler
+from step.lex.token import Token
 
 class SymbolTokenHandler(TokenHandler):
   def __init__(self, symboles={}):

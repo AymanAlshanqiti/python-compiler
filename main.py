@@ -1,15 +1,15 @@
-from lex.tokenizer import *
-from lex.handler import *
-from lex.token import *
-from lex.handlers.number import NumberTokenHandler
-from lex.handlers.whitespace import WhitespaceTokenHandler
-from lex.handlers.identifier import IdentifierTokenHandler
-from lex.handlers.comment import CommentTokenHandler
-from lex.handlers.symbol import SymbolTokenHandler
-from lex.handlers.string import StringTokenHandler
+from step.lex.tokenizer import *
+from step.lex.handler import *
+from step.lex.token import *
+from step.lex.handlers.number import NumberTokenHandler
+from step.lex.handlers.whitespace import WhitespaceTokenHandler
+from step.lex.handlers.identifier import IdentifierTokenHandler
+from step.lex.handlers.comment import CommentTokenHandler
+from step.lex.handlers.symbol import SymbolTokenHandler
+from step.lex.handlers.string import StringTokenHandler
 
-from parser.parser import *
-from parser.statements.print import PrintStatementParser
+from step.syntax.parser import *
+from step.syntax.statements.print import PrintStatementParser
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -35,9 +35,9 @@ tk = Tokenizer(code,[
       ')': [{')': 'right_paren'}]
     }),
   StringTokenHandler(),
-])
+], [WhitespaceTokenHandler])
 
 prs = Parser(tk, [PrintStatementParser()])
-
+print(prs.parse())
 # for token in tk:
 #   print(token.category, '->', token.type, '->', token.value)

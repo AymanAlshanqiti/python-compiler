@@ -1,5 +1,5 @@
-from lex.tokenizer import *
-from lex.token import *
+from step.lex.handler import TokenHandler
+from step.lex.token import Token
 
 class NumberTokenHandler(TokenHandler):
   def __init__(self):

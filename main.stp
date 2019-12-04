@@ -1,2 +1,1 @@
-let string message = "Welcome to Step Programming Language";
-let integer value = 0x22ECCB;
+print 1 + 2

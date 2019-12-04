@@ -1,16 +1,17 @@
-from lex.tokenizer import *
-from lex.handler import *
+from step.lex.tokenizer import *
+from step.lex.handler import *
 
 NullCharacter = '\0'
 
 class Tokenizer:
-  def __init__(self, source_code, handlers=[]):
+  def __init__(self, source_code, handlers=[], skipped_tokens = []):
     self.line_number = 1
     self.position = -1
     self.source_code = source_code
     self.length = len(self.source_code)
     self.handlers = handlers
     self.tokens = []
+    self.skipped_tokens = skipped_tokens
   
   def is_eof(self):
     return self.position >= self.length 
@@ -40,10 +41,21 @@ class Tokenizer:
   def next_token(self):
     if not self.is_peekable():
       return EOFToken
-
-    for handler in self.handlers:
-      if handler.is_tokenizable(self):
-        return handler.tokenize(self)
+    
+    skipped_tokens_len = len(self.skipped_tokens)
+    if skipped_tokens_len > 0:
+      for handler in self.handlers:
+        for tokenClass in self.skipped_tokens:
+          print(type(tokenClass))
+          if isinstance(handler, tokenClass):
+            break
+        else:
+          if handler.is_tokenizable(self):
+            return handler.tokenize(self)
+    else:
+      for handler in self.handlers:
+        if handler.is_tokenizable(self):
+          return handler.tokenize(self)
     
     if not self.is_peekable():
       return EOFToken

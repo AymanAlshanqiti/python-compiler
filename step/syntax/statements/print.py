@@ -1,6 +1,6 @@
-from token import Token, EOFToken
-from parser import *
-
+from step.lex.token import Token, EOFToken
+from step.syntax.types import *
+from step.syntax.handler import *
 
 class PrintStatement(Statement):
   def __init__(self, token=None, expression=None, level=0, parent_stmt=None, next_stmt=None,previous_stmt=None):
@@ -10,10 +10,10 @@ class PrintStatement(Statement):
 
 class PrintStatementParser(ParserHandler):
   def is_parsable(self, parser):
-    token = parser.tokenizer.token
+    token = parser.token
     return token.category == 'keyword' and token.value == 'print'
 
   def parse(self, parser, parent=None):
-    statement = PrintStatement(parser.tokenizer.token, parser.expression(), parser.current_level)
+    statement = PrintStatement(parser.token, parser.expression(), parser.current_level)
     statement.expression = parser.expression()
     return statement

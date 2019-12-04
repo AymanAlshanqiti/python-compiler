@@ -1,5 +1,5 @@
 from abc import ABC, abstractclassmethod
-from lex.token import *
+from step.lex.token import *
 
 class TokenHandler(ABC):
   def __init__(self):
