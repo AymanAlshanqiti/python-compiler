@@ -42,21 +42,10 @@ class Tokenizer:
     if not self.is_peekable():
       return EOFToken
     
-    skipped_tokens_len = len(self.skipped_tokens)
-    if skipped_tokens_len > 0:
-      for handler in self.handlers:
-        for tokenClass in self.skipped_tokens:
-          print(type(tokenClass))
-          if isinstance(handler, tokenClass):
-            break
-        else:
-          if handler.is_tokenizable(self):
-            return handler.tokenize(self)
-    else:
-      for handler in self.handlers:
-        if handler.is_tokenizable(self):
-          return handler.tokenize(self)
-    
+    for handler in self.handlers:
+      if not handler.is_skipped and handler.is_tokenizable(self):
+        return handler.tokenize(self)
+  
     if not self.is_peekable():
       return EOFToken
   

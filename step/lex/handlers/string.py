@@ -3,6 +3,9 @@ from step.lex.token import Token
 
 
 class StringTokenHandler(TokenHandler):
+  def __init__(self):
+    super().__init__()
+        
   def is_tokenizable(self, tokenizer):
     return tokenizer.peek() == '"'
 

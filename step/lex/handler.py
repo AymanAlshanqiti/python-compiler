@@ -3,8 +3,8 @@ from step.lex.token import *
 
 class TokenHandler(ABC):
   def __init__(self):
-    pass
-  
+    self.is_skipped = False
+
   @abstractclassmethod
   def is_tokenizable(self, tokenizer):
     return False

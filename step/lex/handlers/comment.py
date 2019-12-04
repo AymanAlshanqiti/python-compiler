@@ -2,6 +2,9 @@ from step.lex.handler import TokenHandler
 from step.lex.token import Token
 
 class CommentTokenHandler(TokenHandler):
+  def __init__(self):
+    super().__init__()
+    
   def __init__(self, delimiter='#'):
     self.delimiter = delimiter
 

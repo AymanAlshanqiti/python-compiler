@@ -3,6 +3,7 @@ from step.lex.token import Token
 
 class SymbolTokenHandler(TokenHandler):
   def __init__(self, symboles={}):
+    super().__init__()
     self.symbols = symboles
 
   def is_tokenizable(self, tokenizer):

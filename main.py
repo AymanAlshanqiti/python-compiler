@@ -15,7 +15,7 @@ with open('main.stp', 'r') as ay:
   code = ay.read(1024)
 
 tk = Tokenizer(code,[
-  WhitespaceTokenHandler(),
+  WhitespaceTokenHandler(True),
   NumberTokenHandler(),
   IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for','while', 'int', 'float', 'boolean', 'string'],{
     'false': 'boolean',
@@ -25,7 +25,7 @@ tk = Tokenizer(code,[
     'none': 'null'
   }),
   CommentTokenHandler(),
-  SymbolTokenHandler( {
+  SymbolTokenHandler({
       '+': [{'+': 'plus'}, {'+':'plusplus'}],
       '-': [{'-': 'minus'}, {'-':'minusminus'}],
       '!': [{'!': 'not'}, {'=': 'notequal'}, {'=': 'noteqeq'}],
@@ -35,7 +35,7 @@ tk = Tokenizer(code,[
       ')': [{')': 'right_paren'}]
     }),
   StringTokenHandler(),
-], [WhitespaceTokenHandler])
+])
 
 prs = Parser(tk, [PrintStatementParser()])
 print(prs.parse())

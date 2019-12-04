@@ -1,7 +1,9 @@
-from step.lex.handler import TokenHandler
 from step.lex.token import Token
-
+from step.lex.handler import *
 class IdentifierTokenHandler(TokenHandler):
+  def __init__(self):
+    super().__init__()
+
   def __init__(self, keywords=[], literals={}):
     self.keywords = keywords
     self.literals = literals
