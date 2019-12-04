@@ -26,6 +26,7 @@ class Parser:
     return self
   
   def expression(self):
+    self.consume()
     return self.logical_or_expression()
   
   def logical_or_expression(self):
@@ -89,23 +90,22 @@ class Parser:
 
   def primary(self):
     expr = None
-    if self.nxtoken.category == 'literal':
-      self.consume()
+    if self.token == EOFToken:
+      return None
+    if self.token.category == 'literal':
       return LiteralExpression(self.token)
-    elif self.nxtoken.category == 'id':
-      self.consume()
+    elif self.token.category == 'id':
       return IdentifierExpression(self.token)
-    elif self.nxtoken.value == '(':
+    elif self.token.value == '(':
       self.consume()
       expr = GroupingExpression(self.expression())
-      if self.nxtoken.value != ')':
+      if self.token.value != ')':
         self.tokenizer.unexpected_token()
       self.consume()
       return expr
     
-    # if not self.tokenizer.is_eof():
-    #   print('yep')
-    #   self.tokenizer.unexpected_token()
+    if not self.tokenizer.is_eof():
+      self.tokenizer.unexpected_token()
     
     return expr
     

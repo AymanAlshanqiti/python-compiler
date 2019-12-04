@@ -15,5 +15,4 @@ class PrintStatementParser(ParserHandler):
 
   def parse(self, parser, parent=None):
     statement = PrintStatement(parser.token, parser.expression(), parser.current_level)
-    statement.expression = parser.expression()
     return statement
