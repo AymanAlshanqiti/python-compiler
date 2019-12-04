@@ -86,7 +86,7 @@ class Parser:
     
     return self.primary()
         
-
+        
   def primary(self):
     expr = None
     if self.token == EOFToken:
