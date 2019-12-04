@@ -1,3 +1,4 @@
+from abc import ABC, abstractclassmethod
 
 class Node:
   def __init__(self):
@@ -20,21 +21,12 @@ class BlockStatement(Statement):
     super().__init__(token, level, parent_stmt, next_stmt,previous_stmt)
     self.statements = statements
 
-class BinaryExpression(Expression):
-  def __init__(self, left, operator, right):
-    super().__init__()
-    self.left_expression = left
-    self.operator = operator
-    self.right_expression = right
 
-class LiteralExpression(Expression):
-  def __init__(self, type, value=None):
-    super().__init__()
-    self.type = type
-    self.value = value
+class ExpressionParserHandler(ABC):
+  def __init__(self, tokenizer):
+    self.tokenizer = tokenizer
+    pass
 
-class IdentifierExpression(Expression):
-  def __init__(self, identifier, value=None):
-    super().__init__()
-    self.identifier = identifier
-    self.value = value
+  @abstractclassmethod
+  def expression(self):
+    return None

@@ -1,107 +1,132 @@
-from token import *
-from tokenizer import *
-from types import *
-
+from lex.token import *
+from lex.tokenizer import *
+from expressions import *
 
 class Parser:
   def __init__(self, tokenizer, handlers=[]):
     self.current_level = 0
     self.tokenizer = tokenizer
     self.handlers = handlers
+    self.token = None
+    self.nxtoken = None
+    self.is_first_token = True
 
-  def syntax_error(self, message, line_number, position):
-    print('Ay syntax error:' + message + ', line number : ' + str(line_number) + ', position: ' + str(position))
-    exit(0)
-  
-  def match(self, token_category, token_type):
-    self.token = self.tokenizer.next()
-    if self.token.category != token_category or self.token.type != token_type:
-      self.syntax_error('unexpected token', self.token.line_number, self.token.position)
- 
-  #start expression apis
+  def consume(self):
+    if self.token == EOFToken:
+      return EOFToken
+    
+    if self.is_first_token:
+      self.token = self.tokenizer.next_token()
+      self.is_first_token = False
+    else:
+      self.token = self.nxtoken
+    
+    self.nxtoken = self.tokenizer.next_token()
+
+    return self
   
   def expression(self):
-    expr = self.multiplication()
-    operator = self.tokenizer.peek()
-    while operator.value == '+' or operator.value == '-':
-      self.tokenizer.next()
-      right_expression = self.multiplication()
-      expr = BinaryExpression(expr, operator, right_expression)
-      operator = self.tokenizer.peek()
+    return self.logic_or_expression()
+  
+  def logical_or_expression(self):
+    expr = self.logical_and_expression(self)
+    while self.nxtoken.value == 'or':
+      self.consume()
+      operator = self.token
+      right = self.logical_and_expression()
+      expr = BinaryExpression(expr, operator, right)
+    return expr
+  
+  def logical_and_expression(self):
+    return self.equality_expression()
+  
+  def equality_expression(self):
+    expr = self.relational_expression(self)
+    while self.nxtoken.value == '==' or self.nxtoen.value == '!=':
+      self.consume()
+      operator = self.token
+      right = self.relational_expression()
+      expr = BinaryExpression(expr, operator, right)
+    return expr
+  
+  def relational_expression(self):
+    expr = self.additive_expression(self)
+    while self.nxtoken.value == '>' or self.nxtoen.value == '<'
+    or self.nxtoken.value == '>=' or self.token.value == '<=':
+      self.consume()
+      operator = self.token
+      right = self.additive_expression()
+      expr = BinaryExpression(expr, operator, right)
+    return expr
+  
+  def additive_expression(self):
+    expr = self.multiplicative_expression(self)
+    while self.nxtoken.value == '+' or self.nxtoen.value == '-':
+      self.consume()
+      operator = self.token
+      right = self.multiplicative_expression()
+      expr = BinaryExpression(expr, operator, right)
+    return expr
+
+   def multiplicative_expression(self):
+    expr = self.unary_expression(self)
+    while self.nxtoken.value == '*' or self.nxtoen.value == '/' or self.nxtoen.value == '%':
+      self.consume()
+      operator = self.token
+      right = self.unary_expression()
+      expr = BinaryExpression(expr, operator, right)
+    return expr
+
+    def unary_expression(self):
+      if self.nxtoken.value == '!' or self.nxtoen.value == '-':
+        self.consume()
+        operator = self.token
+        right = self.unary_expression()
+        expr = UnaryExpression(operator, right)
+        return expr
+      
+      return self.primary()
+        
+
+    def primary(self):
+      if self.nxtoken.category == 'literal':
+        self.consume()
+        return LiteralExpression(self.token)
+      elif self.nxtoken.category == 'id':
+        self.consume()
+        return IdentifierExpression(self.token)
+      elif self.nxtoken.value == '(':
+        self.consume()
+        expr = GroupingExpression(self.expression())
+        if self.nxtoken.value != ')':
+          self.tokenizer.unexpected_token()
+        self.consume()
+        return expr
+      
+      self.tokenizer.unexpected_token()
     
-    return expr
-
-
-  def multiplication(self):
-    expr = self.primary()
-    operator = self.tokenizer.peek()
-    while operator.value == '/' or operator.value == '*':
-      self.tokenizer.next()
-      right_expression = self.primary()
-      expr = BinaryExpression(expr, operator, right_expression)
-      operator = self.tokenizer.peek()
-    return expr
   
-  def primary(self):
-    self.token = self.tokenizer.peek()
-    if self.token == EOFToken:
-      return None
-
-    expr = None
-    if self.token.category == 'number':
-      expr = LiteralExpression('integer', self.token.value)
-      self.token = self.tokenizer.next()
-      return expr
-    elif self.token.category == 'id':
-      expr = IdentifierExpression('identifier', self.token.value)
-      self.token = self.tokenizer.next()
-      return expr
-    elif self.token.category == 'keyword' and self.token.type == 'literal':
-      if self.token.value == 'null':
-        expr = LiteralExpression('null', self.token.value)
-        self.token = self.tokenizer.next()
-        return expr
-      else:
-        expr = LiteralExpression('boolean', self.token.value)
-        self.token = self.tokenizer.next()
-        return expr
-    elif self.token.category == 'punctuation' and self.token.type == 'parenl':
-      self.tokenizer.next()
-      expr = self.expression()
-      self.match('punctuation', 'parenr')
-      return expr
-
-    self.syntax_error('invalid value ' + self.token.value, self.token.line_number, self.token.position)
-  
-  #end expression apis
   def parse(self, parent=None):
     statements = []
-    self.token = self.tokenizer.next()
+    statement = None
 
+    self.consume()
+    
     while self.token != EOFToken:
       for parser in self.handlers:
-
         if parser.is_parsable(self):
           statement = parser.parse(self, parent)
-
-        if statement is not None:
-          self.attach_statement(parent, statements, statement)
+          if statement is not None:
+            statements.append(statement)
+      
+      #expression statement here
       
       statement = None
-      self.token = self.tokenizer.next()
+      self.consume()
 
     return statements
+  
 
-  def attach_statement(self, parent, statements, statement):
-    statements_len = len(statements)
-    if statements_len > 0:
-      last_statement = statements[statements_len - 1]
-      statement.parent = parent
-      statement.next = None
-      statement.previous = last_statement
-      last_statement.next = statement
-      
-    statements.append(statement)
-    
-  def has_error(self):
-    return not self.current_level == 0
+
+
+
