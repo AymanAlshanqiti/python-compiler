@@ -5,7 +5,7 @@ from step.syntax.types import *
 class Parser:
   def __init__(self, tokenizer, handlers=[]):
     self.statement_level = 0
-    self.expression_level = 0
+    self.expression_level = -1
     self.expgroup_level = 0
     self.tokenizer = tokenizer
     self.handlers = handlers
@@ -113,8 +113,10 @@ class Parser:
     if self.nxtoken.value == '!' or self.nxtoken.value == '-':
       self.consume()
       operator = self.token
+      self.expression_level += 1
       right = self.unary_expression()
-      expr = UnaryExpression(operator, right)
+      expr = UnaryExpression(operator, right, self.expression_level)
+      self.expression_level -= 1
       return expr
     
     return self.primary()

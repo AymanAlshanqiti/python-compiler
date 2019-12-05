@@ -36,6 +36,7 @@ class UnaryExpression(Expression):
   def __init__(self, operator, expression, level=0):
     super().__init__(level)
     self.expression = expression
+    self.expression.level = level + 1
     self.operator = operator
 
 class GroupingExpression(Expression):
