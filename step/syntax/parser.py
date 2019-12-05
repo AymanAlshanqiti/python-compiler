@@ -43,71 +43,34 @@ class Parser:
   def expression(self):
     return self.logical_or_expression()
   
-  def logical_or_expression(self):
-    expr = self.logical_and_expression()
-    while self.nxtoken.value == 'or':
+  def biexprssion(self, condition, expr_parser):
+    expr = expr_parser()
+    while condition(self):
       self.consume()
       operator = self.token
       self.expression_level += 1
-      right = self.logical_and_expression()
-      expr = BinaryExpression(expr, operator, right, self.expression_level)
-      self.expression_level -= 1
-    return expr
-  
-  def logical_and_expression(self):
-    expr = self.equality_expression()
-    while self.nxtoken.value == 'and':
-      self.consume()
-      operator = self.token
-      self.expression_level += 1
-      right = self.equality_expression()
-      expr = BinaryExpression(expr, operator, right, self.expression_level)
-      self.expression_level -= 1
-    return expr
-  
-  def equality_expression(self):
-    expr = self.relational_expression()
-    while self.nxtoken.value == '==' or self.nxtoken.value == '!=':
-      self.consume()
-      operator = self.token
-      self.expression_level += 1
-      right = self.relational_expression()
-      expr = BinaryExpression(expr, operator, right, self.expression_level)
-      self.expression_level -= 1
-    return expr
-  
-  def relational_expression(self):
-    expr = self.additive_expression()
-    while self.nxtoken.value == '>' or self.nxtoken.value == '<' or self.nxtoken.value == '>=' or self.token.value == '<=':
-      self.consume()
-      operator = self.token
-      self.expression_level += 1
-      right = self.additive_expression()
-      expr = BinaryExpression(expr, operator, right, self.expression_level)
-      self.expression_level -= 1
-    return expr
-  
-  def additive_expression(self):
-    expr = self.multiplicative_expression()
-    while self.nxtoken.value == '+' or self.nxtoken.value == '-':
-      self.consume()
-      operator = self.token
-      self.expression_level += 1
-      right = self.multiplicative_expression()
+      right = expr_parser()
       expr = BinaryExpression(expr, operator, right, self.expression_level)
       self.expression_level -= 1
     return expr
 
+  def logical_or_expression(self):
+    return self.biexprssion(lambda p: p.nxtoken.value == 'or', self.logical_and_expression)
+  
+  def logical_and_expression(self):
+    return self.biexprssion(lambda p: p.nxtoken.value == 'and', self.equality_expression)
+  
+  def equality_expression(self):
+    return self.biexprssion(lambda p: p.nxtoken.value == '==' or p.nxtoken.value == '!=', self.relational_expression)
+  
+  def relational_expression(self):
+    return self.biexprssion(lambda p: p.nxtoken.value == '>' or p.nxtoken.value == '>=' or p.nxtoken.value == '<' or p.nxtoken.value == '<=', self.additive_expression)
+  
+  def additive_expression(self):
+    return self.biexprssion(lambda p: p.nxtoken.value == '+' or p.nxtoken.value == '-' , self.multiplicative_expression)
+
   def multiplicative_expression(self):
-    expr = self.unary_expression()
-    while self.nxtoken.value == '*' or self.nxtoken.value == '/' or self.nxtoken.value == '%':
-      self.consume()
-      operator = self.token
-      self.expression_level += 1
-      right = self.unary_expression()
-      expr = BinaryExpression(expr, operator, right, self.expression_level)
-      self.expression_level -= 1
-    return expr
+    return self.biexprssion(lambda p: p.nxtoken.value == '*' or p.nxtoken.value == '/' or p.nxtoken.value == '%' , self.unary_expression)
 
   def unary_expression(self):
     if self.nxtoken.value == '!' or self.nxtoken.value == '-':

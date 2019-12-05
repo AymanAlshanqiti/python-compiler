@@ -49,29 +49,4 @@ tk = Tokenizer(code,[
 
 prs = Parser(tk, [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
 statements = prs.statement()
-
-def excute_expr(exp):
-  result = 0
-  if isinstance(exp, BinaryExpression):
-    op = exp.operator
-    left = exp.left_expression
-    right = exp.right_expression
-    if op.value == '+' :
-      result = excute_expr(left) + excute_expr(right)
-    elif op.value == '*':
-      result = excute_expr(left) * excute_expr(right)
-  elif isinstance(exp, UnaryExpression):
-    op = exp.operator
-    expression = exp.expression
-    if op.value == '-':
-      result = -1 * excute_expr(expression)
-    elif op.value == '!':
-      result = not excute_expr(expression)
-  elif isinstance(exp, LiteralExpression):
-    if exp.value.type =='number':
-      result = int(exp.value.value)
-  
-  return result
-
-result = excute_expr(statements[0].expression)
-print (result)
+print(statements)
