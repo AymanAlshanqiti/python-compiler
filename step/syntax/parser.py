@@ -48,22 +48,30 @@ class Parser:
     while self.nxtoken.value == 'or':
       self.consume()
       operator = self.token
-      right = self.logical_and_expression()
       self.expression_level += 1
+      right = self.logical_and_expression()
       expr = BinaryExpression(expr, operator, right, self.expression_level)
       self.expression_level -= 1
     return expr
   
   def logical_and_expression(self):
-    return self.equality_expression()
+    expr = self.equality_expression()
+    while self.nxtoken.value == 'and':
+      self.consume()
+      operator = self.token
+      self.expression_level += 1
+      right = self.equality_expression()
+      expr = BinaryExpression(expr, operator, right, self.expression_level)
+      self.expression_level -= 1
+    return expr
   
   def equality_expression(self):
     expr = self.relational_expression()
     while self.nxtoken.value == '==' or self.nxtoken.value == '!=':
       self.consume()
       operator = self.token
-      right = self.relational_expression()
       self.expression_level += 1
+      right = self.relational_expression()
       expr = BinaryExpression(expr, operator, right, self.expression_level)
       self.expression_level -= 1
     return expr
@@ -73,8 +81,8 @@ class Parser:
     while self.nxtoken.value == '>' or self.nxtoken.value == '<' or self.nxtoken.value == '>=' or self.token.value == '<=':
       self.consume()
       operator = self.token
-      right = self.additive_expression()
       self.expression_level += 1
+      right = self.additive_expression()
       expr = BinaryExpression(expr, operator, right, self.expression_level)
       self.expression_level -= 1
     return expr
@@ -84,8 +92,8 @@ class Parser:
     while self.nxtoken.value == '+' or self.nxtoken.value == '-':
       self.consume()
       operator = self.token
-      right = self.multiplicative_expression()
       self.expression_level += 1
+      right = self.multiplicative_expression()
       expr = BinaryExpression(expr, operator, right, self.expression_level)
       self.expression_level -= 1
     return expr
@@ -95,8 +103,8 @@ class Parser:
     while self.nxtoken.value == '*' or self.nxtoken.value == '/' or self.nxtoken.value == '%':
       self.consume()
       operator = self.token
-      right = self.unary_expression()
       self.expression_level += 1
+      right = self.unary_expression()
       expr = BinaryExpression(expr, operator, right, self.expression_level)
       self.expression_level -= 1
     return expr
@@ -119,10 +127,10 @@ class Parser:
 
     if self.nxtoken.category == 'literal':
       self.consume()
-      return LiteralExpression(self.token)
+      return LiteralExpression(self.token, self.expression_level)
     elif self.nxtoken.category == 'id':
       self.consume()
-      return IdentifierExpression(self.token)
+      return IdentifierExpression(self.token, self.expression_level)
     elif self.nxtoken.value == '(':
       self.consume()
       self.expgroup_level += 1

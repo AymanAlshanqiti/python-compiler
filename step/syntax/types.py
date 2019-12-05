@@ -25,10 +25,12 @@ class BinaryExpression(Expression):
   def __init__(self, left, operator, right, level=0):
     super().__init__(level)
     self.left_expression = left
-    self.left_expression.level = level + 1
     self.operator = operator
     self.right_expression = right
+
+    self.left_expression.level = level + 1
     self.right_expression.level = level + 1
+
 
 class UnaryExpression(Expression):
   def __init__(self, operator, expression, level=0):
@@ -40,6 +42,7 @@ class GroupingExpression(Expression):
   def __init__(self, expression, level=0, group_level=0):
     super().__init__(level)
     self.expression = expression
+    self.glevel = group_level
 
 class LiteralExpression(Expression):
   def __init__(self, value=None, level=0):
