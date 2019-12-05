@@ -10,6 +10,8 @@ from step.lex.handlers.string import StringTokenHandler
 
 from step.syntax.parser import *
 from step.syntax.statements.print import PrintStatementParser
+from step.syntax.statements.var import VarStatementParser
+from step.syntax.statements._while import WhileStatementParser
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -25,21 +27,25 @@ tk = Tokenizer(code,[
     'none': 'null'
   }),
   CommentTokenHandler(),
-  SymbolTokenHandler({
-      '+': [{'+': 'plus'}, {'+':'plusplus'}],
-      '-': [{'-': 'minus'}, {'-':'minusminus'}],
+  SymbolTokenHandler('operator', {
+      '+': [{'+': 'plus'}, {'=':'plus_assignment'}],
+      '-': [{'-': 'minus'}, {'=':'minus_assignment'}],
+      '*': [{'*': 'multiplication'}, {'=':'multiplication_assignment'}],
+      '/': [{'/': 'division'}, {'=':'division_assignment'}],
       '!': [{'!': 'not'}, {'=': 'notequal'}, {'=': 'noteqeq'}],
-      ';': [{';': 'semicolon'}],
       '=': [{'=': 'assignment'}, {'=':'eqeq'}],
+    }),
+  SymbolTokenHandler('punctuation', {
+      ';': [{';': 'semicolon'}],
       '(': [{'(': 'left_paren'}],
       ')': [{')': 'right_paren'}]
     }),
   StringTokenHandler(),
 ])
 
-for token in tk:
-  print(token.category, '->', token.type, '->', token.value)
-  
-prs = Parser(tk, [PrintStatementParser()])
-statements = prs.parse()
+# for token in tk:
+#   print(token.category, '->', token.type, '->', token.value)
+
+prs = Parser(tk, [PrintStatementParser(), VarStatementParser(), WhileStatementParser()])
+statements = prs.statement()
 print(statements)

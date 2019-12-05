@@ -19,6 +19,6 @@ class IdentifierTokenHandler(TokenHandler):
     
     if token.value in self.literals.keys():
       token.category = 'literal'
-      token.type = self.literals[self.value]
+      token.type = self.literals[token.value]
 
     return token

@@ -25,6 +25,15 @@ class Parser:
 
     return self
   
+  def expect(self, token_category, token_type):
+    if self.nxtoken.category == token_category and self.nxtoken.type == token_type:
+      self.consume()
+    else:
+      self.syntax_error()
+
+  def syntax_error():
+    self.tokenizer.unexpected_token()
+
   def expression(self):
     return self.logical_or_expression()
   
@@ -86,7 +95,7 @@ class Parser:
     
     return self.primary()
         
-        
+  
   def primary(self):
     expr = None
     if self.token == EOFToken:
@@ -111,7 +120,7 @@ class Parser:
     
     return expr
     
-  
+
   def parse(self, parent=None):
     statements = []
     statement = None
@@ -125,11 +134,20 @@ class Parser:
           if statement is not None:
             statements.append(statement)
       
-      #expression statement here
-      
       statement = None
       self.consume()
+      #expression statement here
+      if self.token.category == 'keyword' and self.token.value == 'end':
+        parser.current_level -= 1
+        break
+        
+    return statements
 
+  def statement(self):
+    statements = self.parse()
+    if self.current_level != 0:
+      print("syntax error: invalid end")
+      exit(0)
     return statements
   
 
