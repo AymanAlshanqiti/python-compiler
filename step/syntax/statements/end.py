@@ -9,5 +9,5 @@ class EndStatementParser(ParserHandler):
 
   def parse(self, parser, parent=None):
     parser.exit_level_falg = True
-    parser.current_level -= 1
+    parser.statement_level -= 1
     return None

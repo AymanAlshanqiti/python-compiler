@@ -4,7 +4,9 @@ from step.syntax.types import *
 
 class Parser:
   def __init__(self, tokenizer, handlers=[]):
-    self.current_level = 0
+    self.statement_level = 0
+    self.expression_level = 0
+    self.expgroup_level = 0
     self.tokenizer = tokenizer
     self.handlers = handlers
     self.token = None
@@ -26,11 +28,14 @@ class Parser:
 
     return self
   
-  def expect(self, token_category, token_type):
+  def expect(self, token_category, token_type, token_value=None):
     if self.nxtoken.category == token_category and self.nxtoken.type == token_type:
+      if token_value != None and self.nxtoken.value != token_value:
+        self.syntax_error()
       self.consume()
-    else:
-      self.syntax_error()
+      return
+    
+    self.syntax_error()
 
   def syntax_error():
     self.tokenizer.unexpected_token()
@@ -44,7 +49,7 @@ class Parser:
       self.consume()
       operator = self.token
       right = self.logical_and_expression()
-      expr = BinaryExpression(expr, operator, right)
+      expr = BinaryExpression(expr, operator, right, self.expression_level + 1)
     return expr
   
   def logical_and_expression(self):
@@ -110,10 +115,12 @@ class Parser:
       return IdentifierExpression(self.token)
     elif self.nxtoken.value == '(':
       self.consume()
-      expr = GroupingExpression(self.expression())
+      self.expgroup_level += 1
+      expr = GroupingExpression(self.expression(), self.expression_level, self.expgroup_level)
       if self.nxtoken.value != ')':
         self.tokenizer.unexpected_token()
       self.consume()
+      self.expgroup_level -= 1
       return expr
     
     if not self.tokenizer.is_eof():
@@ -156,7 +163,7 @@ class Parser:
 
   def statement(self):
     statements = self.parse()
-    if self.current_level != 0:
+    if self.statement_level != 0:
       print("syntax error: invalid end")
       exit(0)
     return statements

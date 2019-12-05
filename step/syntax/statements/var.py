@@ -17,7 +17,7 @@ class VarStatementParser(ParserHandler):
     return token.category == 'keyword' and token.value == 'var'
 
   def parse(self, parser, parent=None):
-    statement = VarStatement(parser.token, None, None, None, parser.current_level, parent)
+    statement = VarStatement(parser.token, None, None, None, parser.statement_level, parent)
     parser.expect('keyword', 'keyword')
     if not parser.token.value in ['int', 'float', 'string', 'boolean']:
       parser.syntax_error()

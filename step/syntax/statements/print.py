@@ -14,5 +14,5 @@ class PrintStatementParser(ParserHandler):
     return token.category == 'keyword' and token.value == 'print'
 
   def parse(self, parser, parent=None):
-    statement = PrintStatement(parser.token, parser.expression(), parser.current_level, parent)
+    statement = PrintStatement(parser.token, parser.expression(), parser.statement_level, parent)
     return statement

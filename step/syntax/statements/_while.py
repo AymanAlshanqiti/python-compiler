@@ -16,7 +16,7 @@ class WhileStatementParser(ParserHandler):
     return token.category == 'keyword' and token.value == 'while'
 
   def parse(self, parser, parent=None):
-    statement = WhileStatement(parser.token, parser.expression(), [], parser.current_level, parent)
-    parser.current_level += 1
+    statement = WhileStatement(parser.token, parser.expression(), [], parser.statement_level, parent)
+    parser.statement_level += 1
     statement.statements = parser.parse(statement)
     return statement
