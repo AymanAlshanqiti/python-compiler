@@ -1,2 +1,4 @@
 while a > 10
-  print a
+  var float price = 2.5
+  print price
+end

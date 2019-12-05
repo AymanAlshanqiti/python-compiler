@@ -35,6 +35,8 @@ tk = Tokenizer(code,[
       '/': [{'/': 'division'}, {'=':'division_assignment'}],
       '!': [{'!': 'not'}, {'=': 'notequal'}, {'=': 'noteqeq'}],
       '=': [{'=': 'assignment'}, {'=':'eqeq'}],
+      '>': [{'>': 'gt'}, {'=':'gteq'}],
+      '<': [{'<': 'lt'}, {'=':'lteq'}],
     }),
   SymbolTokenHandler('punctuation', {
       ';': [{';': 'semicolon'}],

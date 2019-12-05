@@ -136,6 +136,16 @@ class Parser:
             self.exit_level_flag = False
             return statements
           if statement is not None:
+            statement.next = None
+            stmtlen = len(statements)
+            
+            if stmtlen > 0:
+              last_statement = statements[stmtlen - 1]
+              last_statement.next = statement
+              statement.previous = last_statement
+            else:
+              statement.previous = None
+
             statements.append(statement)
       
       statement = None
