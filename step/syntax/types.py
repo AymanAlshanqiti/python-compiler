@@ -25,8 +25,10 @@ class BinaryExpression(Expression):
   def __init__(self, left, operator, right, level=0):
     super().__init__(level)
     self.left_expression = left
+    self.left_expression.level = level + 1
     self.operator = operator
     self.right_expression = right
+    self.right_expression.level = level + 1
 
 class UnaryExpression(Expression):
   def __init__(self, operator, expression, level=0):

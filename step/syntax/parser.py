@@ -49,7 +49,9 @@ class Parser:
       self.consume()
       operator = self.token
       right = self.logical_and_expression()
-      expr = BinaryExpression(expr, operator, right, self.expression_level + 1)
+      self.expression_level += 1
+      expr = BinaryExpression(expr, operator, right, self.expression_level)
+      self.expression_level -= 1
     return expr
   
   def logical_and_expression(self):
@@ -61,7 +63,9 @@ class Parser:
       self.consume()
       operator = self.token
       right = self.relational_expression()
-      expr = BinaryExpression(expr, operator, right)
+      self.expression_level += 1
+      expr = BinaryExpression(expr, operator, right, self.expression_level)
+      self.expression_level -= 1
     return expr
   
   def relational_expression(self):
@@ -70,7 +74,9 @@ class Parser:
       self.consume()
       operator = self.token
       right = self.additive_expression()
-      expr = BinaryExpression(expr, operator, right)
+      self.expression_level += 1
+      expr = BinaryExpression(expr, operator, right, self.expression_level)
+      self.expression_level -= 1
     return expr
   
   def additive_expression(self):
@@ -79,7 +85,9 @@ class Parser:
       self.consume()
       operator = self.token
       right = self.multiplicative_expression()
-      expr = BinaryExpression(expr, operator, right)
+      self.expression_level += 1
+      expr = BinaryExpression(expr, operator, right, self.expression_level)
+      self.expression_level -= 1
     return expr
 
   def multiplicative_expression(self):
@@ -88,7 +96,9 @@ class Parser:
       self.consume()
       operator = self.token
       right = self.unary_expression()
-      expr = BinaryExpression(expr, operator, right)
+      self.expression_level += 1
+      expr = BinaryExpression(expr, operator, right, self.expression_level)
+      self.expression_level -= 1
     return expr
 
   def unary_expression(self):
