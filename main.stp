@@ -1,6 +1,2 @@
-var boolean isActive = false
-var boolean isNotActive = !isActive
-print isActive
-while isActive
-  print isActive
-end
+while a > 10
+  print a

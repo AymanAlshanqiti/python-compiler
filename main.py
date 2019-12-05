@@ -12,6 +12,7 @@ from step.syntax.parser import *
 from step.syntax.statements.print import PrintStatementParser
 from step.syntax.statements.var import VarStatementParser
 from step.syntax.statements._while import WhileStatementParser
+from step.syntax.statements.end import EndStatementParser
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -43,9 +44,7 @@ tk = Tokenizer(code,[
   StringTokenHandler(),
 ])
 
-# for token in tk:
-#   print(token.category, '->', token.type, '->', token.value)
 
-prs = Parser(tk, [PrintStatementParser(), VarStatementParser(), WhileStatementParser()])
+prs = Parser(tk, [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
 statements = prs.statement()
 print(statements)

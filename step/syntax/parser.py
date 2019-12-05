@@ -10,6 +10,7 @@ class Parser:
     self.token = None
     self.nxtoken = None
     self.is_first_token = True
+    self.exit_level_flag = False
 
   def consume(self):
     if self.token == EOFToken:
@@ -126,20 +127,20 @@ class Parser:
     statement = None
 
     self.consume()
-    
+
     while self.token != EOFToken:
       for parser in self.handlers:
         if parser.is_parsable(self):
           statement = parser.parse(self, parent)
+          if self.exit_level_flag:
+            self.exit_level_flag = False
+            return statements
           if statement is not None:
             statements.append(statement)
       
       statement = None
       self.consume()
       #expression statement here
-      if self.token.category == 'keyword' and self.token.value == 'end':
-        parser.current_level -= 1
-        break
         
     return statements
 
