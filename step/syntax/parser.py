@@ -44,12 +44,12 @@ class Parser:
     return self.logical_or_expression()
   
   def biexprssion(self, condition, expr_parser):
-    expr = expr_parser()
+    expr = expr_parser().evalute()
     while condition(self):
       self.consume()
       operator = self.token
       self.expression_level += 1
-      right = expr_parser()
+      right = expr_parser().evalute()
       expr = BinaryExpression(expr, operator, right, self.expression_level).evalute()
       self.expression_level -= 1
     return expr
@@ -99,7 +99,7 @@ class Parser:
     elif self.nxtoken.value == '(':
       self.consume()
       self.expgroup_level += 1
-      return GroupingExpression(self.expression(), self.expression_level, self.expgroup_level).evalute()
+      expr = GroupingExpression(self.expression(), self.expression_level, self.expgroup_level).evalute()
       if self.nxtoken.value != ')':
         self.tokenizer.unexpected_token()
       self.consume()

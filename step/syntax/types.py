@@ -27,9 +27,9 @@ class BlockStatement(Statement):
 class BinaryExpression(Expression):
   def __init__(self, left, operator, right, level=0):
     super().__init__(level)
-    self.left_expression = left.evalute()
+    self.left_expression = left
     self.operator = operator
-    self.right_expression = right.evalute()
+    self.right_expression = right
 
     self.left_expression.level = level + 1
     self.right_expression.level = level + 1
