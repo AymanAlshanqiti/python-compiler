@@ -9,8 +9,6 @@ class VarStatement(Statement):
     self.datatype = datatype
     self.identifier = identifier
     self.expression = expression
-    self.symt_entry = symt_entry
-
 
 class VarStatementParser(ParserHandler):
   def is_parsable(self, parser):
@@ -32,12 +30,5 @@ class VarStatementParser(ParserHandler):
       statement.expression = parser.expression()
     else:
       statement.expression = None
-    
-    statement.symt_entry = SymtEntry(statement.identifier.value, 'var',{
-      'type': statement.datatype.value,
-      'line_number': statement.token.line_number
-    })
-
-    parser.current_symt.insert(statement.symt_entry)
 
     return statement
