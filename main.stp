@@ -1,1 +1,7 @@
-print 2 + 7 * 2
+var boolean isActive = false
+var int fileSize = 234
+while isActive
+ var boolean insideWhile = true
+end
+
+var float delta = 2.2

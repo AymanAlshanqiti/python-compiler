@@ -1,4 +1,5 @@
 from abc import ABC, abstractclassmethod
+from step.symt.symboletable import *
 
 class Node:
   def __init__(self, level=0):
@@ -17,9 +18,10 @@ class Expression(Node):
     super().__init__(level)
 
 class BlockStatement(Statement):
-  def __init__(self, token=None, level=0, parent_stmt=None, next_stmt=None,previous_stmt=None, statements=[]):
+  def __init__(self, token=None, level=0, parent_stmt=None, next_stmt=None,previous_stmt=None, statements=[], parent_symt=None):
     super().__init__(token, level, parent_stmt, next_stmt,previous_stmt)
     self.statements = statements
+    self.symt = SymbolTable(parent_symt)
 
 class BinaryExpression(Expression):
   def __init__(self, left, operator, right, level=0):

@@ -1,6 +1,7 @@
 from step.lex.token import *
 from step.lex.tokenizer import *
 from step.syntax.types import *
+from step.symt.symboletable import *
 
 class Parser:
   def __init__(self, tokenizer, handlers=[]):
@@ -13,6 +14,8 @@ class Parser:
     self.nxtoken = None
     self.is_first_token = True
     self.exit_level_flag = False
+    self.symt = SymbolTable()
+    self.current_symt = self.symt
 
   def consume(self):
     if self.token == EOFToken:
@@ -115,6 +118,10 @@ class Parser:
   def parse(self, parent=None):
     statements = []
     statement = None
+    
+    if parent != None:
+      self.current_symt.children.append(parent.symt)
+      self.current_symt = parent.symt
 
     self.consume()
 
@@ -141,7 +148,7 @@ class Parser:
       statement = None
       self.consume()
       #expression statement here
-        
+    
     return statements
 
   def statement(self):
