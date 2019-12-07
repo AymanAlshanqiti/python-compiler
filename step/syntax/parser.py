@@ -117,7 +117,7 @@ class Parser:
   def parse(self, parent=None):
     statements = []
     statement = None
-    
+
     if parent != None:
       self.current_symt = parent.symt
     
