@@ -5,6 +5,7 @@ class SymtEntry:
     self.attributes = attributes
     pass
 
+# TODO: add level to symt
 
 class SymbolTable:
   def __init__(self,name=None, parent=None, children=[]):

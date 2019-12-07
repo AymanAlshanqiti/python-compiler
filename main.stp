@@ -1,5 +1,11 @@
-var int val = 10
+var int value = 2
+var float price = 2.73
 
-while val > 10
-  print val
+while value > 10
+  var int result = 0
+  print result
 end
+
+var int lastVarX = 200
+var int lastVar = 200
+

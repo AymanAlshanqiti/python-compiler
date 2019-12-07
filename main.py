@@ -49,6 +49,19 @@ tk = Tokenizer(code,[
   StringTokenHandler(),
 ])
 
-prs = Parser(tk, SymbolTable('global'), [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser(), FunStatementParser()])
+
+def expand_symt(symt, level = 1):
+  print((' ' * level) + '@' + symt.name)
+  for name, entry in symt.entries.items():
+    if entry.type == 'var':
+      print((' ' * level) + '#' + entry.name)
+    elif entry.type == 'parameter':
+      print((' ' * level) + '[]' + entry.name)
+    elif entry.type == 'fun':
+      print((' ' * level) + '{\}' + entry.name)
+      expand_symt(entry.attributes['symt'], level + 2)
+
+gsymt = SymbolTable('global')
+prs = Parser(tk, gsymt, [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser(), FunStatementParser()])
 statements = prs.statement()
-print(statements)
+expand_symt(gsymt)

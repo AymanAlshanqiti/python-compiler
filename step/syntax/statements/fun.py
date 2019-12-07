@@ -50,7 +50,7 @@ class FunStatementParser(ParserHandler):
     # symbol table entry
     parser.symt.assert_duplication(identifier.value)
 
-    symt_entry = SymtEntry(identifier.value,'function',{
+    symt_entry = SymtEntry(identifier.value,'fun',{
       'return_type': datatype.value,
       'parameters' : {'count': len(statement.parameters)},
       'symt': statement.symt,

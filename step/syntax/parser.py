@@ -117,6 +117,7 @@ class Parser:
   def parse(self, parent=None):
     statements = []
     statement = None
+    
     if parent != None:
       self.current_symt = parent.symt
     
@@ -126,7 +127,7 @@ class Parser:
       for parser in self.handlers:
         if parser.is_parsable(self):
           statement = parser.parse(self, parent)
-          if self.exit_level_flag:
+          if self.exit_level_flag: #end
             self.exit_level_flag = False
             return statements
           if statement is not None:
