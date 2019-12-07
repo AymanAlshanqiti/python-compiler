@@ -1,3 +1,6 @@
+var int value = 2
 fun int sum(int first, int second)
-  print first + second
+  var int result = first + second
+  print result
 end
+

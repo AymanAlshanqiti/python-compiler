@@ -43,7 +43,8 @@ tk = Tokenizer(code,[
   SymbolTokenHandler('punctuation', {
       ';': [{';': 'semicolon'}],
       '(': [{'(': 'left_paren'}],
-      ')': [{')': 'right_paren'}]
+      ')': [{')': 'right_paren'}],
+      ',': [{',': 'comma'}]
     }),
   StringTokenHandler(),
 ])

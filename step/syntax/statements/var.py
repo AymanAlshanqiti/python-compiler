@@ -29,6 +29,11 @@ class VarStatementParser(ParserHandler):
     parser.expect('id', 'id')
     identifier = parser.token
 
+    entry = self.symt.lookup(identifier.value)
+    if entry != None:
+      print('Error: duplicated parameter "' + identifier.value + '"')
+      
+
     if parser.nxtoken.value == '=':
       parser.consume()
       expression = parser.expression()
@@ -36,6 +41,7 @@ class VarStatementParser(ParserHandler):
       expression = None
 
     # symbol table entry
+    
     symt_entry = SymtEntry(identifier.value,'var',{
       'value': expression.evalute().gattrs['value'],
       'datatype': datatype.value,

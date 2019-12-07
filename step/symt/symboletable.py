@@ -30,4 +30,10 @@ class SymbolTable:
       parent_symt = parent_symt.parent
     
     return None
+  
+  def assert_duplication(self, symbol_name):
+    entry = self.symt.lookup(symbol_name)
+    if entry != None:
+      print('Error: duplicated parameter "' + symbol_name + '"')
+      exit(0)
 

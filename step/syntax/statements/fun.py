@@ -17,8 +17,8 @@ class FunParameter:
 class FunStatement(BlockStatement):
   def __init__(self, parent_symt, token=None, datatype=None, identifier=None, params_list = [], statements=[], level=0, parent_stmt=None, next_stmt=None,previous_stmt=None):
     super().__init__(parent_symt,token, statements, level, parent_stmt, next_stmt, previous_stmt)
-    self.expression = expression
     self.parameters = params_list
+    self.symt = SymbolTable(parent_symt)
 
 
 class FunStatementParser(ParserHandler):
@@ -70,11 +70,22 @@ class FunStatementParser(ParserHandler):
   def parse_param(self, parser, default_value = None, position=0):    
     parser.expect('keyword', 'keyword')
     if not parser.token.value in ['int', 'float', 'string', 'boolean']:
-      print('xxxx')
       parser.syntax_error()
 
     datatype = parser.token
     parser.expect('id', 'id')
     identifier = parser.token
+
+    # symbol table entry
+    entry = self.symt.lookup(identifier.value)
+    if entry != None:
+      print('Error: duplicated parameter "' + identifier.value + '"')
+
+    symt_entry = SymtEntry(identifier.value,'parameter',{
+      'value': None,
+      'datatype': datatype.value,
+      'line_number': datatype.line_number
+    })
+
     return FunParameter(datatype, identifier, default_value, position)
     
