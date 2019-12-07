@@ -7,7 +7,7 @@ from step.symt.symboletable import *
 
 class WhileStatement(BlockStatement):
   def __init__(self, parent_symt, token=None, expression=None, statements=[], level=0, parent_stmt=None, next_stmt=None,previous_stmt=None):
-    super().__init__(parent_symt,token, statements, level, parent_stmt, next_stmt, previous_stmt)
+    super().__init__('while', parent_symt,token, statements, level, parent_stmt, next_stmt, previous_stmt)
     self.expression = expression
 
 

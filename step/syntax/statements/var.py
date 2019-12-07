@@ -20,6 +20,11 @@ class VarStatementParser(ParserHandler):
 
   def parse(self, parser, parent=None):
     token = parser.token
+
+    if parent != None:
+      symt = parent.symt
+    else: # global symt
+      symt = parser.symt
     
     parser.expect('keyword', 'keyword')
     if not parser.token.value in ['int', 'float', 'string', 'boolean']:
@@ -28,11 +33,8 @@ class VarStatementParser(ParserHandler):
     datatype = parser.token
     parser.expect('id', 'id')
     identifier = parser.token
-
-    entry = self.symt.lookup(identifier.value)
-    if entry != None:
-      print('Error: duplicated parameter "' + identifier.value + '"')
-      
+    
+    symt.assert_duplication(identifier.value)
 
     if parser.nxtoken.value == '=':
       parser.consume()
@@ -48,9 +50,5 @@ class VarStatementParser(ParserHandler):
       'line_number': token.line_number
     })
 
-    if parent != None:
-      parent.symt.insert(symt_entry)
-    else: # global symt
-      parser.symt.insert(symt_entry)
-
+    symt.insert(symt_entry)
     return VarStatement(symt_entry, token, datatype, identifier, expression, parser.statement_level, parent)

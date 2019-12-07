@@ -7,7 +7,8 @@ class SymtEntry:
 
 
 class SymbolTable:
-  def __init__(self,parent=None, children=[]):
+  def __init__(self,name=None, parent=None, children=[]):
+    self.name = name
     self.entries = {}
     self.parent = parent
     self.children = children
@@ -32,8 +33,8 @@ class SymbolTable:
     return None
   
   def assert_duplication(self, symbol_name):
-    entry = self.symt.lookup(symbol_name)
+    entry = self.lookup(symbol_name)
     if entry != None:
-      print('Error: duplicated parameter "' + symbol_name + '"')
+      print('Error: duplicated id "' + symbol_name + '"')
       exit(0)
 
