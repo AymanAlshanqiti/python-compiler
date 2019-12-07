@@ -58,8 +58,7 @@ class FunStatementParser(ParserHandler):
     })
 
     parser.symt.insert(symt_entry)
-
-
+    parser.symt.children.append(statement.symt)
 
     return statement
   

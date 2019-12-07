@@ -32,8 +32,11 @@ class SymbolTable:
     
     return None
   
+  def active_lookup(self, name):
+    return self.entries.get(name, None)
+  
   def assert_duplication(self, symbol_name):
-    entry = self.lookup(symbol_name)
+    entry = self.active_lookup(symbol_name)
     if entry != None:
       print('Error: duplicated id "' + symbol_name + '"')
       exit(0)

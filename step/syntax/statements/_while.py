@@ -27,4 +27,6 @@ class WhileStatementParser(ParserHandler):
     parser.statement_level += 1
     statement.statements = parser.parse(statement)
 
+    psymt.children.append(statement.symt)
+
     return statement

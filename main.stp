@@ -1,6 +1,5 @@
-var int value = 2
-fun int sum(int first, int second)
-  var int result = first + second
-  print result
-end
+var int val = 10
 
+while val > 10
+  print val
+end
