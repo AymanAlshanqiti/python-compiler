@@ -1,2 +1,1 @@
-var int size = 84
-print ((size - 1) / 3) * 2
+var int documentSize = 43 - 2

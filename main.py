@@ -46,6 +46,5 @@ tk = Tokenizer(code,[
   StringTokenHandler(),
 ])
 
-
 prs = Parser(tk, SymbolTable(), [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
 statements = prs.statement()

@@ -77,15 +77,17 @@ class LiteralExpression(Expression):
     self.value = value
   
   def evalute(self):
-    if self.value.metadata['datatype'] == 'integer':
-      self.gattrs['value'] = int(self.value.value)
-    elif self.value.metadata['datatype'] == 'float':
-      self.gattrs['value'] = float(self.value.value)
-    elif self.value.metadata['datatype'] == 'boolean':
+    if self.value.value in ['true', 'false']:
       if self.value.value == 'true':
         self.gattrs['value'] = True
       else:
         self.gattrs['value'] = False
+    elif self.value.metadata['datatype'] == 'integer':
+      self.gattrs['value'] = int(self.value.value)
+    elif self.value.metadata['datatype'] == 'float':
+      self.gattrs['value'] = float(self.value.value)
+    elif self.value.metadata['datatype'] == 'string':
+      self.gattrs['value'] = self.value.value
     return self
 
 class IdentifierExpression(Expression):

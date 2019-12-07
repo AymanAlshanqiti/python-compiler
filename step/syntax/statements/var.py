@@ -11,7 +11,8 @@ class VarStatement(Statement):
     self.identifier = identifier
     self.expression = expression
     self.symt_entry = None
-
+  
+  
 class VarStatementParser(ParserHandler):
   def is_parsable(self, parser):
     token = parser.token
