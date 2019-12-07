@@ -35,11 +35,11 @@ class VarStatementParser(ParserHandler):
       expression = None
 
     # symbol table entry
-      symt_entry = SymtEntry(statement.identifier.value,'var',{
-        'value': None,
-        'datatype': statement.datatype.value,
-        'line_number': statement.token.line_number
-      })
+    symt_entry = SymtEntry(identifier.value,'var',{
+      'value': expression.evalute(),
+      'datatype': datatype.value,
+      'line_number': token.line_number
+    })
 
     if parent != None:
       parent.symt.insert(symt_entry)

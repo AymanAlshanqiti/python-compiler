@@ -5,7 +5,7 @@ from step.syntax.types import *
 class Parser:
   def __init__(self, tokenizer, symt, handlers=[]):
     self.statement_level = 0
-    self.expression_level = -1
+    self.expression_level = 0
     self.expgroup_level = 0
     self.tokenizer = tokenizer
     self.handlers = handlers
@@ -14,6 +14,7 @@ class Parser:
     self.is_first_token = True
     self.exit_level_flag = False
     self.symt = symt
+    self.current_symt = symt
 
   def consume(self):
     if self.token == EOFToken:
@@ -96,7 +97,7 @@ class Parser:
       return LiteralExpression(self.token, self.expression_level).evalute()
     elif self.nxtoken.category == 'id':
       self.consume()
-      return IdentifierExpression(self.token, self.expression_level).evalute()
+      return IdentifierExpression(self.current_symt, self.token, self.expression_level).evalute()
     elif self.nxtoken.value == '(':
       self.consume()
       self.expgroup_level += 1
@@ -116,6 +117,8 @@ class Parser:
   def parse(self, parent=None):
     statements = []
     statement = None
+    if parent != None:
+      self.current_symt = parent.symt
     
     self.consume()
 

@@ -89,10 +89,18 @@ class LiteralExpression(Expression):
     return self
 
 class IdentifierExpression(Expression):
-  def __init__(self, value=None, level=0):
+  def __init__(self, symt, value=None, level=0):
     super().__init__(level)
+    
+    if symt == None or symt.lookup(value.value) == None:
+      print('undefined var : ' + value.value)
+      exit(0)
+
+    self.symt = symt
     self.value = value
+
   
   def evalute(self):
-    self.gattrs['value'] = 1
+    sym_entry = self.symt.lookup(self.value.value)
+    self.gattrs['value'] = sym_entry.attributes['value']
     return self

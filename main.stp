@@ -1,2 +1,2 @@
-print (1 + 2) * 3 - (24)
-print 44 / 11
+var int size = 200 + 23
+print size

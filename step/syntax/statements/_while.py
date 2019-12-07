@@ -26,4 +26,5 @@ class WhileStatementParser(ParserHandler):
     statement = WhileStatement(symt, parser.token, parser.expression(), [], parser.statement_level, parent)
     parser.statement_level += 1
     statement.statements = parser.parse(statement)
+
     return statement

@@ -10,4 +10,6 @@ class EndStatementParser(ParserHandler):
   def parse(self, parser, parent=None):
     parser.exit_level_falg = True
     parser.statement_level -= 1
+    if parser.current_symt != None and parser.current_symt.parent != None:
+      parser.current_symt = parser.current_symt.parent
     return None

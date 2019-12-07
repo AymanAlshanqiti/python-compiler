@@ -16,4 +16,18 @@ class SymbolTable:
     self.entries[entry.name] = entry
   
   def lookup(self, name):
-    return self.entries.get(name, None)
+    parent_symt = self
+    entry = self.entries.get(name, None)
+    if entry != None:
+      return entry
+    
+    parent_symt = parent_symt.parent
+    while parent_symt != None:
+      entry = parent_symt.entries.get(name, None)
+      if entry != None:
+        return entry
+      
+      parent_symt = parent_symt.parent
+    
+    return None
+

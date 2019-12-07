@@ -47,7 +47,6 @@ tk = Tokenizer(code,[
 ])
 
 
-prs = Parser(tk, [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
+prs = Parser(tk, SymbolTable(), [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
 statements = prs.statement()
-for statement in statements:
-  print(statement.expression.gattrs['value'])
+print(statements)
