@@ -13,6 +13,8 @@ from step.syntax.statements.print import PrintStatementParser
 from step.syntax.statements.var import VarStatementParser
 from step.syntax.statements._while import WhileStatementParser
 from step.syntax.statements.end import EndStatementParser
+from step.syntax.statements.fun import FunStatementParser
+
 
 with open('main.stp', 'r') as ay:
   code = ay.read(1024)
@@ -20,7 +22,7 @@ with open('main.stp', 'r') as ay:
 tk = Tokenizer(code,[
   WhitespaceTokenHandler(True),
   NumberTokenHandler(),
-  IdentifierTokenHandler(['var', 'let', 'print', 'if', 'else', 'end', 'for','while', 'int', 'float', 'boolean', 'string'],{
+  IdentifierTokenHandler(['fun', 'var', 'let', 'print', 'if', 'else', 'end', 'for','while', 'int', 'float', 'boolean', 'string'],{
     'false': 'boolean',
     'true': 'boolean',
     'null': 'null',
@@ -46,5 +48,5 @@ tk = Tokenizer(code,[
   StringTokenHandler(),
 ])
 
-prs = Parser(tk, SymbolTable(), [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
+prs = Parser(tk, SymbolTable(), [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser(), FunStatementParser()])
 statements = prs.statement()

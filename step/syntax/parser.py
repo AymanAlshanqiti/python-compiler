@@ -39,7 +39,7 @@ class Parser:
     
     self.syntax_error()
 
-  def syntax_error():
+  def syntax_error(self):
     self.tokenizer.unexpected_token()
 
   def expression(self):

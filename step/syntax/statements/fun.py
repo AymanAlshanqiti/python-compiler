@@ -27,7 +27,8 @@ class FunStatementParser(ParserHandler):
     return token.category == 'keyword' and token.value == 'fun'
 
   def parse(self, parser, parent=None):
-    
+    token = parser.token
+
     if parent != None:
       psymt = parent.symt
     else:
@@ -41,11 +42,11 @@ class FunStatementParser(ParserHandler):
     parser.expect('id', 'id')
     identifier = parser.token
 
-    parser.expect('punctuation', 'parenl')
+    parser.expect('punctuation', 'left_paren')
     parameters = self.parse_params_list(parser)
-    parser.expect('punctuation', 'parenl')
+    parser.expect('punctuation', 'right_paren')
 
-    statement = FunStatement(psymt, parser.token, datatype, identifier, parameters, None, parser.statement_level, parent)
+    statement = FunStatement(psymt, token, datatype, identifier, parameters, None, parser.statement_level, parent)
     parser.statement_level += 1
     statement.statements = parser.parse(statement)
 
@@ -69,6 +70,7 @@ class FunStatementParser(ParserHandler):
   def parse_param(self, parser, default_value = None, position=0):    
     parser.expect('keyword', 'keyword')
     if not parser.token.value in ['int', 'float', 'string', 'boolean']:
+      print('xxxx')
       parser.syntax_error()
 
     datatype = parser.token
