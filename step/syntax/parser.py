@@ -3,7 +3,7 @@ from step.lex.tokenizer import *
 from step.syntax.types import *
 
 class Parser:
-  def __init__(self, tokenizer, handlers=[]):
+  def __init__(self, tokenizer, symt, handlers=[]):
     self.statement_level = 0
     self.expression_level = -1
     self.expgroup_level = 0
@@ -13,6 +13,7 @@ class Parser:
     self.nxtoken = None
     self.is_first_token = True
     self.exit_level_flag = False
+    self.symt = symt
 
   def consume(self):
     if self.token == EOFToken:
