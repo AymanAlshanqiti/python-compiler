@@ -1,42 +1,13 @@
 from step.lex.tokenizer import *
 from step.lex.handler import *
-
-NullCharacter = '\0'
+from step.src.sourcecode import SourceCode
 
 class Tokenizer:
   def __init__(self, source_code, handlers=[], skipped_tokens = []):
-    self.line_number = 1
-    self.position = -1
-    self.source_code = source_code
-    self.length = len(self.source_code)
+    self.src = SourceCode(source_code)
     self.handlers = handlers
     self.tokens = []
     self.skipped_tokens = skipped_tokens
-  
-  def is_eof(self):
-    return self.position >= self.length 
-  
-  def is_peekable(self):
-    return (self.position + 1) < self.length
-  
-  def character(self):
-    if not self.is_eof() and self.position > -1:
-      return self.source_code[self.position]
-    else:
-      return NullCharacter
-  
-  def peek(self):
-    if self.is_peekable():
-      return self.source_code[self.position + 1]
-    return NullCharacter
-  
-  def nxcharacter(self):
-    if self.is_peekable():
-      self.position += 1
-      if self.character() == '\n':
-        self.line_number += 1
-      return self.source_code[self.position]
-    return NullCharacter
 
   def next_token(self):
     if not self.is_peekable():
