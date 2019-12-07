@@ -15,4 +15,6 @@ class PrintStatementParser(ParserHandler):
 
   def parse(self, parser, parent=None):
     statement = PrintStatement(parser.token, parser.expression(), parser.statement_level, parent)
+    statement.gattrs['value'] = statement.expression.gattrs['value']
+    print(statement.gattrs['value'])
     return statement

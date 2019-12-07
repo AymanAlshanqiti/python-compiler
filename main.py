@@ -49,4 +49,3 @@ tk = Tokenizer(code,[
 
 prs = Parser(tk, SymbolTable(), [PrintStatementParser(), VarStatementParser(), WhileStatementParser(), EndStatementParser()])
 statements = prs.statement()
-print(statements)

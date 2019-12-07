@@ -36,7 +36,7 @@ class VarStatementParser(ParserHandler):
 
     # symbol table entry
     symt_entry = SymtEntry(identifier.value,'var',{
-      'value': expression.evalute(),
+      'value': expression.evalute().gattrs['value'],
       'datatype': datatype.value,
       'line_number': token.line_number
     })

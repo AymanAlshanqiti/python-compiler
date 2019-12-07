@@ -1,2 +1,2 @@
-var int size = 200 + 23
-print size
+var int size = 84
+print ((size - 1) / 3) * 2
